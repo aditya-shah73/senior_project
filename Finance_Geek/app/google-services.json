@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "341414257821",
+    "firebase_url": "https://finance-geek-9e957.firebaseio.com",
+    "project_id": "finance-geek-9e957",
+    "storage_bucket": "finance-geek-9e957.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:341414257821:android:7da3d3b767ba7d20",
+        "android_client_info": {
+          "package_name": "com.example.finance_geek"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "341414257821-0lplb8j92vohdiprvpoqm5dh9gvgmkn7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.finance_geek",
+            "certificate_hash": "341AD06CFD5FCA8BDE3E4C52B5519B274B9AE15C"
+          }
+        },
+        {
+          "client_id": "341414257821-p42qiqj8mkd9odfkoshcb1nobrnks3g9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBExy6zV4g3ymXWqLGhmXl2_seq2sB2i9Y"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "341414257821-p42qiqj8mkd9odfkoshcb1nobrnks3g9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
