@@ -54,6 +54,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         switch (v.getId()) {
             case R.id.sign_in_button:
                 signIn();
+                loadHomePage();
                 break;
             case R.id.signOutButton:
                 signOut();
@@ -64,6 +65,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     private void signIn() {
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
         startActivityForResult(signInIntent, RC_SIGN_IN);
+    }
+
+    public void loadHomePage() {
+        Intent i = new Intent(MainActivity.this, HomePage.class);
+        startActivity(i);
     }
 
     @Override
