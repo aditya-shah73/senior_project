@@ -18,28 +18,57 @@ import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GoogleAuthProvider;
 
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
 
+    private GoogleApiClient mGoogleApiClient;
+    private FirebaseAuth mAuth;
+    private FirebaseAuth.AuthStateListener mAuthListener;
+    private static final int RC_SIGN_IN = 0;
+    private static String TAG = "MAIN_ACTIVITY";
     SignInButton signInButton;
     Button signOutButton;
     TextView statusTextView;
-    GoogleApiClient mGoogleApiClient;
-    private static final String TAG = "SignInActivity";
-    private static final int RC_SIGN_IN = 9001;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mAuth = FirebaseAuth.getInstance();
+        mAuthListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+                if(user != null)
+                {
+                    Log.d("Auth", "user logged in" + user.getEmail());
+                }
+                else
+                {
+                    Log.d("Auth", "user logged out");
+                }
+            }
+        };
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build();
+
         mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
+                .enableAutoManage(this, this)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
+
+        findViewById(R.id.sign_in_button).setOnClickListener(this);
+        findViewById(R.id.signOutButton).setOnClickListener(this);
 
         statusTextView = (TextView) findViewById(R.id.status_textview);
         signInButton = (SignInButton) findViewById(R.id.sign_in_button);
@@ -47,6 +76,20 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
         signOutButton = (Button) findViewById(R.id.signOutButton);
         signOutButton.setOnClickListener(this);
+    }
+
+    private void signIn() {
+        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+        startActivityForResult(signInIntent, RC_SIGN_IN);
+    }
+
+    private void signOut() {
+       FirebaseAuth.getInstance().signOut();
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+        Log.d(TAG, "onConnectionFailed:" + connectionResult);
     }
 
     @Override
@@ -61,16 +104,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         }
     }
 
-    private void signIn() {
-        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
-        startActivityForResult(signInIntent, RC_SIGN_IN);
-    }
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
-        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             handleSignInResult(result);
@@ -78,28 +114,38 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     }
 
     private void handleSignInResult(GoogleSignInResult result) {
-        Log.d(TAG, "handleSignInResult:" + result.isSuccess());
         if (result.isSuccess()) {
-            // Signed in successfully, show authenticated UI.
-            GoogleSignInAccount acct = result.getSignInAccount();
-            statusTextView.setText("Hello, " + acct.getDisplayName());
+            GoogleSignInAccount account = result.getSignInAccount();
+            firebaseAuthWithGoogle (account);
         }
 
         else {
+            Log.d(TAG, "Google login failed");
         }
     }
 
-    @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
-        Log.d(TAG, "onConnectionFailed:" + connectionResult);
+    private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
+        AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
+        mAuth.signInWithCredential(credential)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                       Log.d("Auth", "signInWithCredential: onComplete" + task.isSuccessful());
+                    }
+                });
     }
 
-    private void signOut() {
-        Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(new ResultCallback<Status>() {
-            @Override
-            public void onResult(Status status) {
-                statusTextView.setText("Signed Out");
-            }
-        });
+    @Override
+    protected void onStart(){
+        super.onStart();
+        mAuth.addAuthStateListener(mAuthListener);
+    }
+
+    @Override
+    protected void onStop(){
+        super.onStop();
+        if(mAuthListener != null){
+            mAuth.removeAuthStateListener(mAuthListener);
+        }
     }
 }
