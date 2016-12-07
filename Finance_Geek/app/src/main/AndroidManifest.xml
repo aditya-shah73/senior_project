@@ -14,6 +14,7 @@
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -23,8 +24,26 @@
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".Report_Page"
+            android:label="@string/title_activity_report__page"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".Search_Page"
+            android:label="@string/title_activity_search__page"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".Scan_Page"
+            android:label="@string/title_activity_scan__page"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".Settings_Page"
+            android:label="@string/title_activity_settings__page"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
+
 </manifest>

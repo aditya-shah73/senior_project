@@ -14,13 +14,13 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class Home_Page extends AppCompatActivity
+public class Search_Page extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home__page);
+        setContentView(R.layout.activity_search__page);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -56,7 +56,7 @@ public class Home_Page extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.home__page, menu);
+        getMenuInflater().inflate(R.menu.search__page, menu);
         return true;
     }
 
@@ -82,18 +82,18 @@ public class Home_Page extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_home) {
-
+            Intent i = new Intent(Search_Page.this, Home_Page.class);
+            startActivity(i);
         } else if (id == R.id.nav_report) {
-            Intent i = new Intent(Home_Page.this, Report_Page.class);
+            Intent i = new Intent(Search_Page.this, Report_Page.class);
             startActivity(i);
         } else if (id == R.id.nav_camera) {
-            Intent i = new Intent(Home_Page.this, Scan_Page.class);
+            Intent i = new Intent(Search_Page.this, Scan_Page.class);
             startActivity(i);
         } else if (id == R.id.nav_search) {
-            Intent i = new Intent(Home_Page.this, Search_Page.class);
-            startActivity(i);
+
         } else if (id == R.id.nav_settings) {
-            Intent i = new Intent(Home_Page.this, Settings_Page.class);
+            Intent i = new Intent(Search_Page.this, Settings_Page.class);
             startActivity(i);
         } else if (id == R.id.nav_share) {
 
