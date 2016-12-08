@@ -52,7 +52,7 @@ public class Search_Page extends AppCompatActivity
                 .Builder(this)
                 .addApi(Places.GEO_DATA_API)
                 .addApi(Places.PLACE_DETECTION_API)
-                .enableAutoManage(this, (GoogleApiClient.OnConnectionFailedListener) this)
+                .enableAutoManage(this, this)
                 .build();
 
         // Google Place Picker button listener
