@@ -24,15 +24,6 @@ public class Report_Page extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -87,11 +78,9 @@ public class Report_Page extends AppCompatActivity
         } else if (id == R.id.nav_report) {
 
         } else if (id == R.id.nav_camera) {
-            Intent i = new Intent(Report_Page.this, Scan_Page.class);
-            startActivity(i);
+
         } else if (id == R.id.nav_search) {
-            Intent i = new Intent(Report_Page.this, Search_Page.class);
-            startActivity(i);
+
         } else if (id == R.id.nav_settings) {
             Intent i = new Intent(Report_Page.this, Settings_Page.class);
             startActivity(i);
