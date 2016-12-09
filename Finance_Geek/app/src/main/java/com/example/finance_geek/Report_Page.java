@@ -78,9 +78,11 @@ public class Report_Page extends AppCompatActivity
         } else if (id == R.id.nav_report) {
 
         } else if (id == R.id.nav_camera) {
-
+            Intent i = new Intent(Report_Page.this, Scan_Page.class);
+            startActivity(i);
         } else if (id == R.id.nav_search) {
-
+            Intent i = new Intent(Report_Page.this, Search_Page.class);
+            startActivity(i);
         } else if (id == R.id.nav_settings) {
             Intent i = new Intent(Report_Page.this, Settings_Page.class);
             startActivity(i);
