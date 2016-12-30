@@ -95,10 +95,6 @@ public class Settings_Page extends AppCompatActivity
             startActivity(i);
         } else if (id == R.id.nav_settings) {
 
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

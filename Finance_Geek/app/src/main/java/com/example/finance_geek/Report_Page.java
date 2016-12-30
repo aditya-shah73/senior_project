@@ -86,10 +86,6 @@ public class Report_Page extends AppCompatActivity
         } else if (id == R.id.nav_settings) {
             Intent i = new Intent(Report_Page.this, Settings_Page.class);
             startActivity(i);
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
