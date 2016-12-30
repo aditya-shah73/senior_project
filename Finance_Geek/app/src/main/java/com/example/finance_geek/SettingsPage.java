@@ -14,15 +14,24 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class Report_Page extends AppCompatActivity
+public class SettingsPage extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_report__page);
+        setContentView(R.layout.activity_settings__page);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            }
+        });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -47,7 +56,7 @@ public class Report_Page extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.report__page, menu);
+        getMenuInflater().inflate(R.menu.settings__page, menu);
         return true;
     }
 
@@ -73,19 +82,19 @@ public class Report_Page extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_home) {
-            Intent i = new Intent(Report_Page.this, Home_Page.class);
+            Intent i = new Intent(SettingsPage.this, HomePage.class);
             startActivity(i);
         } else if (id == R.id.nav_report) {
-
+            Intent i = new Intent(SettingsPage.this, ReportPage.class);
+            startActivity(i);
         } else if (id == R.id.nav_camera) {
-            Intent i = new Intent(Report_Page.this, Scan_Page.class);
+            Intent i = new Intent(SettingsPage.this, ScanPage.class);
             startActivity(i);
         } else if (id == R.id.nav_search) {
-            Intent i = new Intent(Report_Page.this, Search_Page.class);
+            Intent i = new Intent(SettingsPage.this, SearchPage.class);
             startActivity(i);
         } else if (id == R.id.nav_settings) {
-            Intent i = new Intent(Report_Page.this, Settings_Page.class);
-            startActivity(i);
+
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

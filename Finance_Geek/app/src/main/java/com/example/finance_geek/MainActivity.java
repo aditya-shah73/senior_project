@@ -114,7 +114,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         if (result.isSuccess()) {
             GoogleSignInAccount account = result.getSignInAccount();
             firebaseAuthWithGoogle (account);
-            Intent i = new Intent(MainActivity.this, Home_Page.class);
+            Intent i = new Intent(MainActivity.this, HomePage.class);
             startActivity(i);
         }
 

@@ -14,13 +14,13 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class Scan_Page extends AppCompatActivity
+public class ReportPage extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_scan__page);
+        setContentView(R.layout.activity_report__page);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -47,7 +47,7 @@ public class Scan_Page extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.scan__page, menu);
+        getMenuInflater().inflate(R.menu.report__page, menu);
         return true;
     }
 
@@ -73,18 +73,18 @@ public class Scan_Page extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_home) {
-            Intent i = new Intent(Scan_Page.this, Home_Page.class);
+            Intent i = new Intent(ReportPage.this, HomePage.class);
             startActivity(i);
         } else if (id == R.id.nav_report) {
-            Intent i = new Intent(Scan_Page.this, Report_Page.class);
-            startActivity(i);
-        } else if (id == R.id.nav_camera) {
 
+        } else if (id == R.id.nav_camera) {
+            Intent i = new Intent(ReportPage.this, ScanPage.class);
+            startActivity(i);
         } else if (id == R.id.nav_search) {
-            Intent i = new Intent(Scan_Page.this, Search_Page.class);
+            Intent i = new Intent(ReportPage.this, SearchPage.class);
             startActivity(i);
         } else if (id == R.id.nav_settings) {
-            Intent i = new Intent(Scan_Page.this, Settings_Page.class);
+            Intent i = new Intent(ReportPage.this, SettingsPage.class);
             startActivity(i);
         }
 

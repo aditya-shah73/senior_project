@@ -14,13 +14,13 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class Settings_Page extends AppCompatActivity
+public class HomePage extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_settings__page);
+        setContentView(R.layout.activity_home__page);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -56,7 +56,7 @@ public class Settings_Page extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.settings__page, menu);
+        getMenuInflater().inflate(R.menu.home__page, menu);
         return true;
     }
 
@@ -82,19 +82,19 @@ public class Settings_Page extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_home) {
-            Intent i = new Intent(Settings_Page.this, Home_Page.class);
-            startActivity(i);
+
         } else if (id == R.id.nav_report) {
-            Intent i = new Intent(Settings_Page.this, Report_Page.class);
+            Intent i = new Intent(HomePage.this, ReportPage.class);
             startActivity(i);
         } else if (id == R.id.nav_camera) {
-            Intent i = new Intent(Settings_Page.this, Scan_Page.class);
+            Intent i = new Intent(HomePage.this, ScanPage.class);
             startActivity(i);
         } else if (id == R.id.nav_search) {
-            Intent i = new Intent(Settings_Page.this, Search_Page.class);
+            Intent i = new Intent(HomePage.this, SearchPage.class);
             startActivity(i);
         } else if (id == R.id.nav_settings) {
-
+            Intent i = new Intent(HomePage.this, SettingsPage.class);
+            startActivity(i);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

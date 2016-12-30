@@ -25,7 +25,7 @@ import android.widget.RelativeLayout;
 import android.view.View;
 
 
-public class Search_Page extends AppCompatActivity
+public class SearchPage extends AppCompatActivity
         implements OnConnectionFailedListener, NavigationView.OnNavigationItemSelectedListener {
 
     private GoogleApiClient mGoogleApiClient;
@@ -61,7 +61,7 @@ public class Search_Page extends AppCompatActivity
                 int PLACE_PICKER_REQUEST = 1;
                 PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
                 try {
-                    startActivityForResult(builder.build(Search_Page.this), PLACE_PICKER_REQUEST);
+                    startActivityForResult(builder.build(SearchPage.this), PLACE_PICKER_REQUEST);
                 } catch (GooglePlayServicesRepairableException e) {
                     e.printStackTrace();
                 } catch (GooglePlayServicesNotAvailableException e) {
@@ -110,18 +110,18 @@ public class Search_Page extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_home) {
-            Intent i = new Intent(Search_Page.this, Home_Page.class);
+            Intent i = new Intent(SearchPage.this, HomePage.class);
             startActivity(i);
         } else if (id == R.id.nav_report) {
-            Intent i = new Intent(Search_Page.this, Report_Page.class);
+            Intent i = new Intent(SearchPage.this, ReportPage.class);
             startActivity(i);
         } else if (id == R.id.nav_camera) {
-            Intent i = new Intent(Search_Page.this, Scan_Page.class);
+            Intent i = new Intent(SearchPage.this, ScanPage.class);
             startActivity(i);
         } else if (id == R.id.nav_search) {
 
         } else if (id == R.id.nav_settings) {
-            Intent i = new Intent(Search_Page.this, Settings_Page.class);
+            Intent i = new Intent(SearchPage.this, SettingsPage.class);
             startActivity(i);
         }
 
