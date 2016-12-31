@@ -82,12 +82,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
     protected void signOut() {
         FirebaseAuth.getInstance().signOut();
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.putExtra("finish", true);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
-        finish();
     }
 
     @Override

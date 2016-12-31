@@ -30,7 +30,8 @@
 
         <Button
             android:text="Sign Out"
-            android:layout_width="match_parent"
+            android:layout_gravity="center"
+            android:layout_width="118dp"
             android:layout_height="wrap_content"
             android:id="@+id/log_out_button" />
     </LinearLayout>

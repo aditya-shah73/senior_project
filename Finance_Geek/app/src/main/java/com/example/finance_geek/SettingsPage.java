@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -111,8 +112,12 @@ public class SettingsPage extends AppCompatActivity
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.log_out_button) {
-            MainActivity m = new MainActivity();
-            m.signOut();
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.putExtra("finish", true);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            finish();
         }
     }
 }
