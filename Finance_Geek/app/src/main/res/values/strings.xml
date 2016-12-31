@@ -4,12 +4,12 @@
     <dimen name="font_size">25dp</dimen>
     <color name="green">#96e05e</color>
     <color name="white">#FFFFFF</color>
-    <string name="title_activity_home__page">Home_Page</string>
+    <string name="title_activity_home__page">HomePage</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="title_activity_report__page">Report_Page</string>
-    <string name="title_activity_search__page">Search_Page</string>
-    <string name="title_activity_scan__page">Scan_Page</string>
-    <string name="title_activity_settings__page">Settings_Page</string>
+    <string name="title_activity_report__page">ReportPage</string>
+    <string name="title_activity_search__page">SearchPage</string>
+    <string name="title_activity_scan__page">ScanPage</string>
+    <string name="title_activity_settings__page">SettingsPage</string>
 </resources>

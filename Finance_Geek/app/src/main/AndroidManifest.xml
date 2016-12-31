@@ -20,7 +20,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Home_Page"
+            android:name=".HomePage"
             android:label="@string/title_activity_home__page"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -29,7 +29,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Report_Page"
+            android:name=".ReportPage"
             android:label="@string/title_activity_report__page"
             android:theme="@style/AppTheme.NoActionBar" >
             <intent-filter>
@@ -38,7 +38,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Search_Page"
+            android:name=".SearchPage"
             android:label="@string/title_activity_search__page"
             android:theme="@style/AppTheme.NoActionBar" >
             <intent-filter>
@@ -47,7 +47,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Scan_Page"
+            android:name=".ScanPage"
             android:label="@string/title_activity_scan__page"
             android:theme="@style/AppTheme.NoActionBar" >
             <intent-filter>
@@ -56,7 +56,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Settings_Page"
+            android:name=".SettingsPage"
             android:label="@string/title_activity_settings__page"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>

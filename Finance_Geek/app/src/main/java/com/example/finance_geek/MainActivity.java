@@ -75,13 +75,19 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         signOutButton.setOnClickListener(this);
     }
 
-    private void signIn() {
+    protected void signIn() {
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
-    private void signOut() {
-       FirebaseAuth.getInstance().signOut();
+    protected void signOut() {
+        FirebaseAuth.getInstance().signOut();
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.putExtra("finish", true);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
     }
 
     @Override

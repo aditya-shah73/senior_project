@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="com.example.finance_geek.Settings_Page">
+    tools:context="com.example.finance_geek.SettingsPage">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
