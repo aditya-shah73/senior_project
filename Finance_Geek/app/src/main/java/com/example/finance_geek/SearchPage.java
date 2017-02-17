@@ -23,6 +23,7 @@ import android.support.v4.app.FragmentActivity;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.view.View;
+import android.widget.Toast;
 
 
 public class SearchPage extends AppCompatActivity
@@ -71,6 +72,16 @@ public class SearchPage extends AppCompatActivity
         });
     }
 
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        int PLACE_PICKER_REQUEST = 1;
+        if (requestCode == PLACE_PICKER_REQUEST) {
+            if (resultCode == RESULT_OK) {
+                Place place = PlacePicker.getPlace(data, this);
+                String toastMsg = String.format("Place name: %s Rating: %s", place.getName(), place.getRating());
+                Toast.makeText(this, toastMsg, Toast.LENGTH_LONG).show();
+            }
+        }
+    }
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
