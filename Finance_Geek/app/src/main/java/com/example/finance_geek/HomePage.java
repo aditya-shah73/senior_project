@@ -1,10 +1,14 @@
 package com.example.finance_geek;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.text.InputType;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -14,6 +18,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -21,6 +26,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -32,6 +39,8 @@ import com.google.firebase.database.ValueEventListener;
 public class HomePage extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    int counter = 0; //counter for the + widget
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,10 +50,27 @@ public class HomePage extends AppCompatActivity
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
+            EditText resturantText = (EditText) findViewById(R.id.restaurantText);
+            EditText itemText = (EditText) findViewById(R.id.itemText);
+            EditText priceText = (EditText) findViewById(R.id.priceText);
+            Button button = (Button) findViewById(R.id.addButton);
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+
+                if(counter % 2 == 0) {
+                    resturantText.setVisibility(View.VISIBLE);
+                    itemText.setVisibility(View.VISIBLE);
+                    priceText.setVisibility(View.VISIBLE);
+                    button.setVisibility(View.VISIBLE);
+                    counter++;
+                }
+                else {
+                    resturantText.setVisibility(View.GONE);
+                    itemText.setVisibility(View.GONE);
+                    priceText.setVisibility(View.GONE);
+                    button.setVisibility(View.GONE);
+                    counter = 0;
+                }
             }
         });
 
@@ -71,12 +97,13 @@ public class HomePage extends AppCompatActivity
         FirebaseDatabase database = FirebaseDatabase.getInstance();
 
         // Get a reference to the todoItems child items it the database
-        final DatabaseReference myRef = database.getReference("todoItems");
+        //final DatabaseReference myRef = database.getReference("todoItems");
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        final DatabaseReference myRef = database.getReference(user.getUid());
 
         // Assign a listener to detect changes to the child items
         // of the database reference.
         myRef.addChildEventListener(new ChildEventListener(){
-
             // This function is called once for each child that exists
             // when the listener is added. Then it is called
             // each time a new child is added.
@@ -104,7 +131,9 @@ public class HomePage extends AppCompatActivity
         });
 
         // Add items via the Button and EditText at the bottom of the window.
-        final EditText text = (EditText) findViewById(R.id.todoText);
+        final EditText restaurantText = (EditText) findViewById(R.id.restaurantText);
+        final EditText itemText = (EditText) findViewById(R.id.itemText);
+        final EditText priceText = (EditText) findViewById(R.id.priceText);
         final Button button = (Button) findViewById(R.id.addButton);
 
         button.setOnClickListener(new View.OnClickListener() {
@@ -114,8 +143,10 @@ public class HomePage extends AppCompatActivity
                 DatabaseReference childRef = myRef.push();
 
                 // Set the child's data to the value passed in from the text box.
-                childRef.setValue(text.getText().toString());
-
+                childRef.setValue(restaurantText.getText().toString());
+                //childRef.child("Item List").child("Item").child("Restaurant").setValue(restaurantText.getText().toString());
+                //myRef.child("Item List").child("Item").child("Item").setValue(itemText.getText().toString());
+                //myRef.child("Item List").child("Item").child("Price").setValue(priceText.getText().toString());
             }
         });
 
@@ -203,4 +234,29 @@ public class HomePage extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+    //close keyboard when click on background
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent event) {
+
+        View v = getCurrentFocus();
+        boolean ret = super.dispatchTouchEvent(event);
+
+        if (v instanceof EditText) {
+            View w = getCurrentFocus();
+            int scrcoords[] = new int[2];
+            w.getLocationOnScreen(scrcoords);
+            float x = event.getRawX() + w.getLeft() - scrcoords[0];
+            float y = event.getRawY() + w.getTop() - scrcoords[1];
+
+            Log.d("Activity", "Touch event "+event.getRawX()+","+event.getRawY()+" "+x+","+y+" rect "+w.getLeft()+","+w.getTop()+","+w.getRight()+","+w.getBottom()+" coords "+scrcoords[0]+","+scrcoords[1]);
+            if (event.getAction() == MotionEvent.ACTION_UP && (x < w.getLeft() || x >= w.getRight() || y < w.getTop() || y > w.getBottom()) ) {
+
+                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(getWindow().getCurrentFocus().getWindowToken(), 0);
+            }
+        }
+        return ret;
+    }
+
 }

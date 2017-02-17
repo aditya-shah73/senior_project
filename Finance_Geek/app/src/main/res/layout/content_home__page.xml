@@ -13,7 +13,7 @@
         android:id="@+id/listView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_weight="0.36">
     </ListView>
 
     <LinearLayout
@@ -22,13 +22,28 @@
         android:orientation="vertical"
         android:layout_gravity="bottom">
         <EditText
-            android:id="@+id/todoText"
+            android:id="@+id/restaurantText"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:visibility = "gone"
+            android:hint="Enter Restaurant Name"/>
+        <EditText
+            android:id="@+id/itemText"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:visibility = "gone"
+            android:hint="Enter Item Name"/>
+        <EditText
+            android:id="@+id/priceText"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:visibility = "gone"
+            android:hint="Enter Price"/>
         <Button
             android:id="@+id/addButton"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="Add New Item"/>
+            android:text="Add New Item"
+            android:visibility = "gone"/>
     </LinearLayout>
 </LinearLayout>
