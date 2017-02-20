@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -12,21 +11,28 @@
     <ListView
         android:id="@+id/listView"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="0.36">
+        android:layout_height="500dp"
+        android:layout_weight="0.36"
+        android:layout_below="@+id/linearLayout"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="45dp">
     </ListView>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_gravity="bottom">
+        android:layout_gravity="bottom"
+        android:weightSum="1"
+        android:layout_alignParentTop="true">
         <EditText
             android:id="@+id/restaurantText"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:visibility = "gone"
-            android:hint="Enter Restaurant Name"/>
+            android:hint="Enter Restaurant Name"
+            android:layout_weight="1" />
         <EditText
             android:id="@+id/itemText"
             android:layout_width="fill_parent"
@@ -46,4 +52,6 @@
             android:text="Add New Item"
             android:visibility = "gone"/>
     </LinearLayout>
+
+
 </LinearLayout>

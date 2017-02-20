@@ -26,6 +26,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -40,7 +41,11 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.lang.reflect.Array;
+import java.text.DateFormat;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -67,9 +72,11 @@ public class HomePage extends AppCompatActivity
 
         @Override
         public String toString() {
+            NumberFormat priceFormatter = NumberFormat.getCurrencyInstance();
+
             return "Restaurant: " + this.restaurant + "\n"
                     + "Item: " + this.item + "\n"
-                    + "Price: $" + this.price;
+                    + "Price: " + priceFormatter.format(price);
         }
     }
 
@@ -100,10 +107,19 @@ public class HomePage extends AppCompatActivity
                 }
                 else {
                     resturantText.setVisibility(View.GONE);
+                    resturantText.setText(null);
                     itemText.setVisibility(View.GONE);
+                    itemText.setText(null);
                     priceText.setVisibility(View.GONE);
+                    priceText.setText(null);
                     button.setVisibility(View.GONE);
                     counter = 0;
+                    //hide keyboard
+                    InputMethodManager inputManager = (InputMethodManager)
+                            getSystemService(Context.INPUT_METHOD_SERVICE);
+
+                    inputManager.hideSoftInputFromWindow((null == getCurrentFocus()) ?
+                            null : getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
                 }
             }
         });
@@ -157,10 +173,8 @@ public class HomePage extends AppCompatActivity
 
             // This function is called each time a child item is removed.
             public void onChildRemoved(DataSnapshot dataSnapshot){
-                for (DataSnapshot child : dataSnapshot.getChildren()) {
-                    Item value = child.getValue(Item.class);
-                    adapter.remove(value);
-                }
+                Item value = dataSnapshot.getValue(Item.class);
+                adapter.remove(value);
             }
 
             // The following functions are also required in ChildEventListener implementations.
@@ -177,7 +191,9 @@ public class HomePage extends AppCompatActivity
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 String resturant = restaurantText.getText().toString();
+
                 String item = itemText.getText().toString();
+
                 String priceString = priceText.getText().toString();
                 double price = Double.parseDouble(priceString);
 
@@ -187,15 +203,15 @@ public class HomePage extends AppCompatActivity
                 itemRef.setValue(new Item(resturant, item, price));
             }
         });
-        /*
+
         // Delete items when clicked
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
 
-                Query myQuery = myRef.orderByValue().equalTo((String)
-                        listView.getItemAtPosition(position));
+                Query myQuery = myRef.orderByValue().equalTo(
+                        listView.getItemAtPosition(position).toString());
 
                 myQuery.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -211,12 +227,13 @@ public class HomePage extends AppCompatActivity
                     }
                 })
                 ;}
-        });*/
+        });
     }
 
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -229,21 +246,6 @@ public class HomePage extends AppCompatActivity
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.home__page, menu);
         return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -272,29 +274,4 @@ public class HomePage extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
-    /*
-    //close keyboard when click on background
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent event) {
-
-        View v = getCurrentFocus();
-        boolean ret = super.dispatchTouchEvent(event);
-
-        if (v instanceof EditText) {
-            View w = getCurrentFocus();
-            int scrcoords[] = new int[2];
-            w.getLocationOnScreen(scrcoords);
-            float x = event.getRawX() + w.getLeft() - scrcoords[0];
-            float y = event.getRawY() + w.getTop() - scrcoords[1];
-
-            Log.d("Activity", "Touch event "+event.getRawX()+","+event.getRawY()+" "+x+","+y+" rect "+w.getLeft()+","+w.getTop()+","+w.getRight()+","+w.getBottom()+" coords "+scrcoords[0]+","+scrcoords[1]);
-            if (event.getAction() == MotionEvent.ACTION_UP && (x < w.getLeft() || x >= w.getRight() || y < w.getTop() || y > w.getBottom()) ) {
-
-                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(getWindow().getCurrentFocus().getWindowToken(), 0);
-            }
-        }
-        return ret;
-    }*/
-
 }
