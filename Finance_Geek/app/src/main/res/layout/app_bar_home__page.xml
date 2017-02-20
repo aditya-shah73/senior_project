@@ -33,5 +33,4 @@
         android:tint="@android:color/white"
         app:srcCompat="@android:drawable/ic_input_add"
         app:backgroundTint="@color/green" />
-
 </android.support.design.widget.CoordinatorLayout>

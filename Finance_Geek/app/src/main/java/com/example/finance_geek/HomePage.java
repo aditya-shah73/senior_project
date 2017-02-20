@@ -44,6 +44,7 @@ import java.lang.reflect.Array;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -132,6 +133,12 @@ public class HomePage extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        //date
+        DateFormat df = new SimpleDateFormat("MMM dd, yyyy");
+        Date dateobj = new Date();
+        TextView date = (TextView) findViewById(R.id.date);
+        date.setText(df.format(dateobj));
 
         // Add items via the Button and EditText at the bottom of the window.
         final EditText restaurantText = (EditText) findViewById(R.id.restaurantText);
