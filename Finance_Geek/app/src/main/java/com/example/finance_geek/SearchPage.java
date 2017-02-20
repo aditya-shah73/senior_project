@@ -17,8 +17,12 @@ import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.places.*;
+import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlacePicker;
+import com.google.android.gms.location.places.ui.PlaceSelectionListener;
+
 import android.support.v4.app.FragmentActivity;
 import android.widget.Button;
 import android.widget.RelativeLayout;
@@ -56,7 +60,7 @@ public class SearchPage extends AppCompatActivity
                 .enableAutoManage(this, this)
                 .build();
 
-        // Google Place Picker button listener
+        //Launch Google Place Picker
         placesButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 int PLACE_PICKER_REQUEST = 1;
@@ -70,8 +74,28 @@ public class SearchPage extends AppCompatActivity
                 }
             }
         });
+
+        //Listener for AutoComplete search bar
+        final PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
+                getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
+
+        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onPlaceSelected(Place place) {
+                // TODO: Get info about the selected place.
+                String toastMsg = String.format("Place name: %s Rating: %s", place.getName(), place.getRating());
+                Toast.makeText(getApplicationContext(), toastMsg, Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onError(Status status) {
+                String toastMsg = String.format("Error");
+                Toast.makeText(getApplicationContext(), toastMsg, Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
+    //Google Place Picker Listener
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         int PLACE_PICKER_REQUEST = 1;
         if (requestCode == PLACE_PICKER_REQUEST) {
@@ -82,6 +106,8 @@ public class SearchPage extends AppCompatActivity
             }
         }
     }
+
+
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
