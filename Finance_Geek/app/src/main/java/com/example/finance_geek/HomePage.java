@@ -8,6 +8,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.text.InputType;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -18,6 +19,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Adapter;
 import android.widget.AdapterView;
@@ -25,6 +27,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -36,8 +39,39 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+
 public class HomePage extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    public static class Item {
+        public String restaurant;
+        public String item;
+        public double price;
+
+        public Item() {
+            super();
+        }
+
+        public Item(String restaurantName, String itemName, double price) {
+            super();
+            this.restaurant = restaurantName;
+            this.item = itemName;
+            this.price = price;
+        }
+
+        @Override
+        public String toString() {
+            return "Restaurant: " + this.restaurant + "\n"
+                    + "Item: " + this.item + "\n"
+                    + "Price: $" + this.price;
+        }
+    }
 
     int counter = 0; //counter for the + widget
 
@@ -83,11 +117,17 @@ public class HomePage extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        // Add items via the Button and EditText at the bottom of the window.
+        final EditText restaurantText = (EditText) findViewById(R.id.restaurantText);
+        final EditText itemText = (EditText) findViewById(R.id.itemText);
+        final EditText priceText = (EditText) findViewById(R.id.priceText);
+        final Button button = (Button) findViewById(R.id.addButton);
+
         // Get ListView object from xml
         final ListView listView = (ListView) findViewById(R.id.listView);
 
         // Create a new Adapter
-        final ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
+        final ArrayAdapter<Item> adapter = new ArrayAdapter<Item>(this,
                 android.R.layout.simple_list_item_1, android.R.id.text1);
 
         // Assign adapter to ListView
@@ -96,7 +136,7 @@ public class HomePage extends AppCompatActivity
         // Connect to the Firebase database
         FirebaseDatabase database = FirebaseDatabase.getInstance();
 
-        // Get a reference to the todoItems child items it the database
+        // Get a reference to the todoItems child items in the database
         //final DatabaseReference myRef = database.getReference("todoItems");
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         final DatabaseReference myRef = database.getReference(user.getUid());
@@ -109,14 +149,18 @@ public class HomePage extends AppCompatActivity
             // each time a new child is added.
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String previousChildName) {
-                String value = dataSnapshot.getValue(String.class);
-                adapter.add(value);
+                for (DataSnapshot child : dataSnapshot.getChildren()) {
+                    Item value = child.getValue(Item.class);
+                    adapter.add(value);
+                }
             }
 
             // This function is called each time a child item is removed.
             public void onChildRemoved(DataSnapshot dataSnapshot){
-                String value = dataSnapshot.getValue(String.class);
-                adapter.remove(value);
+                for (DataSnapshot child : dataSnapshot.getChildren()) {
+                    Item value = child.getValue(Item.class);
+                    adapter.remove(value);
+                }
             }
 
             // The following functions are also required in ChildEventListener implementations.
@@ -130,26 +174,20 @@ public class HomePage extends AppCompatActivity
             }
         });
 
-        // Add items via the Button and EditText at the bottom of the window.
-        final EditText restaurantText = (EditText) findViewById(R.id.restaurantText);
-        final EditText itemText = (EditText) findViewById(R.id.itemText);
-        final EditText priceText = (EditText) findViewById(R.id.priceText);
-        final Button button = (Button) findViewById(R.id.addButton);
-
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                String resturant = restaurantText.getText().toString();
+                String item = itemText.getText().toString();
+                String priceString = priceText.getText().toString();
+                double price = Double.parseDouble(priceString);
 
-                // Create a new child with a auto-generated ID.
-                DatabaseReference childRef = myRef.push();
+                DatabaseReference itemListRef = myRef.child("Item List");
+                DatabaseReference itemRef = itemListRef.push();
 
-                // Set the child's data to the value passed in from the text box.
-                childRef.setValue(restaurantText.getText().toString());
-                //childRef.child("Item List").child("Item").child("Restaurant").setValue(restaurantText.getText().toString());
-                //myRef.child("Item List").child("Item").child("Item").setValue(itemText.getText().toString());
-                //myRef.child("Item List").child("Item").child("Price").setValue(priceText.getText().toString());
+                itemRef.setValue(new Item(resturant, item, price));
             }
         });
-
+        /*
         // Delete items when clicked
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
@@ -173,7 +211,7 @@ public class HomePage extends AppCompatActivity
                     }
                 })
                 ;}
-        });
+        });*/
     }
 
     @Override
@@ -234,7 +272,7 @@ public class HomePage extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
-
+    /*
     //close keyboard when click on background
     @Override
     public boolean dispatchTouchEvent(MotionEvent event) {
@@ -257,6 +295,6 @@ public class HomePage extends AppCompatActivity
             }
         }
         return ret;
-    }
+    }*/
 
 }
