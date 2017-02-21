@@ -15,6 +15,38 @@
       },
       "oauth_client": [
         {
+          "client_id": "341414257821-if1dqk5v9tk2raugeqqtqt1cramb4436.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.finance_geek",
+            "certificate_hash": "F392824C540C4D486193EEC0AE29C2D2A582266D"
+          }
+        },
+        {
+          "client_id": "341414257821-j8532q7dnj5c5uflcu4amu4gd1j0p8b6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.finance_geek",
+            "certificate_hash": "718A1A835DD5EE87CB938A63B38E67A1AC7248CD"
+          }
+        },
+        {
+          "client_id": "341414257821-f7hucd0g2k1l1qrvn33vo39hnq1bk1ua.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.finance_geek",
+            "certificate_hash": "3A10B0BC1C19534673BFF290DE48AB49072BFC87"
+          }
+        },
+        {
+          "client_id": "341414257821-pfhvs6pnfkmmbm3k2vp1ag7n8akh2mch.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.finance_geek",
+            "certificate_hash": "CC9C1809EAF6A93F5EF565CCEBBAB8BE01C256EE"
+          }
+        },
+        {
           "client_id": "341414257821-0lplb8j92vohdiprvpoqm5dh9gvgmkn7.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

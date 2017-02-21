@@ -26,12 +26,12 @@
         android:layout_alignParentStart="true"
         android:buttonTint="#51b46d" />
 
-    <SearchView
+    <fragment
+        android:id="@+id/place_autocomplete_fragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_above="@+id/ratingCheckBox" />
+        android:layout_height="wrap_content"
+        android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
+        />
 
     <CheckBox
         android:text="Rating"
