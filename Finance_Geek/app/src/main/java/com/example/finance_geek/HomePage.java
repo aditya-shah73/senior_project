@@ -29,6 +29,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -191,17 +192,33 @@ public class HomePage extends AppCompatActivity
 
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                String resturant = restaurantText.getText().toString();
-
+                String restaurant = restaurantText.getText().toString();
                 String item = itemText.getText().toString();
-
                 String priceString = priceText.getText().toString();
-                double price = Double.parseDouble(priceString);
+                double price = 0.00;
+
+                //check if input is null
+                if (restaurant.equals("")) {
+                    Toast.makeText(getApplicationContext(), "You did not enter a restraunt", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                else if(item.equals("")) {
+                    Toast.makeText(getApplicationContext(), "You did not enter an item", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                else if(priceString.equals("")) {
+                    Toast.makeText(getApplicationContext(), "You did not enter a price", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                if(!priceString.equals("")) {
+                    price = Double.parseDouble(priceString);
+                }
 
                 DatabaseReference itemListRef = myRef.child("Item List");
                 DatabaseReference itemRef = itemListRef.push();
 
-                itemRef.setValue(new Item(resturant, item, price));
+                itemRef.setValue(new Item(restaurant, item, price));
             }
         });
 
@@ -213,6 +230,7 @@ public class HomePage extends AppCompatActivity
 
                 Query myQuery = myRef.orderByValue().equalTo(
                         listView.getItemAtPosition(position).toString());
+
 
                 myQuery.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -228,6 +246,8 @@ public class HomePage extends AppCompatActivity
                     }
                 })
                 ;}
+
+
         });
     }
 
