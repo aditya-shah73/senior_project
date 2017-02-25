@@ -5,10 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.text.InputType;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -19,14 +16,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -41,17 +35,11 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
-import java.lang.reflect.Array;
 import java.text.DateFormat;
-import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 
 public class HomePage extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -80,6 +68,11 @@ public class HomePage extends AppCompatActivity
                     + "Item: " + this.item + "\n"
                     + "Price: " + priceFormatter.format(price);
         }
+
+        @Override
+        public boolean equals(Object object) {
+            return (this == object);
+        }
     }
 
     int counter = 0; //counter for the + widget
@@ -93,7 +86,7 @@ public class HomePage extends AppCompatActivity
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
-            EditText resturantText = (EditText) findViewById(R.id.restaurantText);
+            EditText restaurantText = (EditText) findViewById(R.id.restaurantText);
             EditText itemText = (EditText) findViewById(R.id.itemText);
             EditText priceText = (EditText) findViewById(R.id.priceText);
             Button button = (Button) findViewById(R.id.addButton);
@@ -101,15 +94,14 @@ public class HomePage extends AppCompatActivity
             public void onClick(View view) {
 
                 if(counter % 2 == 0) {
-                    resturantText.setVisibility(View.VISIBLE);
+                    restaurantText.setVisibility(View.VISIBLE);
                     itemText.setVisibility(View.VISIBLE);
                     priceText.setVisibility(View.VISIBLE);
                     button.setVisibility(View.VISIBLE);
                     counter++;
                 }
                 else {
-                    resturantText.setVisibility(View.GONE);
-                    resturantText.setText(null);
+                    restaurantText.setVisibility(View.GONE);
                     itemText.setVisibility(View.GONE);
                     itemText.setText(null);
                     priceText.setVisibility(View.GONE);
@@ -154,23 +146,22 @@ public class HomePage extends AppCompatActivity
         // Connect to the Firebase database
         FirebaseDatabase database = FirebaseDatabase.getInstance();
 
-        // Get a reference to the todoItems child items in the database
-        //final DatabaseReference myRef = database.getReference("todoItems");
+        // Get a reference to the child items in the database
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         final DatabaseReference myRef = database.getReference(user.getUid());
+        final DatabaseReference itemListChild = myRef.child("Item List");
+
 
         // Assign a listener to detect changes to the child items
         // of the database reference.
-        myRef.addChildEventListener(new ChildEventListener(){
+        itemListChild.addChildEventListener(new ChildEventListener(){
             // This function is called once for each child that exists
             // when the listener is added. Then it is called
             // each time a new child is added.
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String previousChildName) {
-                for (DataSnapshot child : dataSnapshot.getChildren()) {
-                    Item value = child.getValue(Item.class);
-                    adapter.add(value);
-                }
+                Item value = dataSnapshot.getValue(Item.class);
+                adapter.add(value);
             }
 
             // This function is called each time a child item is removed.
@@ -192,6 +183,7 @@ public class HomePage extends AppCompatActivity
 
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                String regex = "[0-9.]*";
                 String restaurant = restaurantText.getText().toString();
                 String item = itemText.getText().toString();
                 String priceString = priceText.getText().toString();
@@ -212,13 +204,28 @@ public class HomePage extends AppCompatActivity
                 }
 
                 if(!priceString.equals("")) {
-                    price = Double.parseDouble(priceString);
+                    if(priceString.matches(regex)) {
+                        price = Double.parseDouble(priceString);
+                    }
+                    else {
+                        Toast.makeText(getApplicationContext(), "Enter a numerical price", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
                 }
+                DatabaseReference itemChild = itemListChild.push();
+                Log.d("itemChild", itemChild.getKey());
+                itemChild.setValue(new Item(restaurant, item, price));
 
-                DatabaseReference itemListRef = myRef.child("Item List");
-                DatabaseReference itemRef = itemListRef.push();
-
-                itemRef.setValue(new Item(restaurant, item, price));
+                //UI changes
+                restaurantText.setVisibility(View.GONE);
+                restaurantText.setText(null);
+                itemText.setVisibility(View.GONE);
+                itemText.setText(null);
+                priceText.setVisibility(View.GONE);
+                priceText.setText(null);
+                button.setVisibility(View.GONE);
+                counter = 0;
             }
         });
 
@@ -228,9 +235,10 @@ public class HomePage extends AppCompatActivity
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
 
-                Query myQuery = myRef.orderByValue().equalTo(
+                Query myQuery = itemListChild.orderByKey().equalTo(
                         listView.getItemAtPosition(position).toString());
 
+                Log.d("data", itemListChild.orderByValue().toString());
 
                 myQuery.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -245,8 +253,8 @@ public class HomePage extends AppCompatActivity
                     public void onCancelled(DatabaseError databaseError) {
                     }
                 })
-                ;}
-
+                ;
+            }
 
         });
     }
