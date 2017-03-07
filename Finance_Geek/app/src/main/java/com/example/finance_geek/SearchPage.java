@@ -22,6 +22,12 @@ import com.google.android.gms.location.places.*;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import android.support.v4.app.FragmentActivity;
 import android.widget.Button;
@@ -31,7 +37,7 @@ import android.widget.Toast;
 
 
 public class SearchPage extends AppCompatActivity
-        implements OnConnectionFailedListener, NavigationView.OnNavigationItemSelectedListener {
+        implements OnConnectionFailedListener, NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback {
 
     private GoogleApiClient mGoogleApiClient;
 
@@ -53,6 +59,13 @@ public class SearchPage extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        // Get the SupportMapFragment and request notification
+        // when the map is ready to be used.
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
+
+        //Google Place Picker
         mGoogleApiClient = new GoogleApiClient
                 .Builder(this)
                 .addApi(Places.GEO_DATA_API)
@@ -93,6 +106,17 @@ public class SearchPage extends AppCompatActivity
                 Toast.makeText(getApplicationContext(), toastMsg, Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+    //Google Map
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        // Add a marker at current location
+        // and move the map's camera to the same location.
+        LatLng currentLocation = new LatLng(-33.852, 151.211);
+        googleMap.addMarker(new MarkerOptions().position(currentLocation)
+                .title("Marker in Current Place"));
+        googleMap.moveCamera(CameraUpdateFactory.newLatLng(currentLocation));
     }
 
     //Google Place Picker Listener
