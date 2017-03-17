@@ -14,17 +14,17 @@
     tools:showIn="@layout/app_bar_search__page">
 
     <CheckBox
-        android:text="Proximity"
+        android:id="@+id/proximityCheckBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="35dp"
-        android:layout_marginStart="35dp"
-        android:layout_marginTop="75dp"
-        android:id="@+id/proximityCheckBox"
-        android:layout_alignParentTop="true"
+        android:layout_marginLeft="37dp"
+        android:layout_marginStart="37dp"
+        android:layout_marginTop="40dp"
+        android:buttonTint="#51b46d"
+        android:text="Proximity"
+        android:layout_below="@+id/editText3"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:buttonTint="#51b46d" />
+        android:layout_alignParentStart="true" />
 
     <fragment
         android:id="@+id/place_autocomplete_fragment"
@@ -52,18 +52,9 @@
         android:layout_below="@+id/proximityCheckBox"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_marginTop="30dp"
+
         android:id="@+id/googlePlaceView">
 
-        <Button
-            android:text="Launch Google Places"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:id="@+id/placesButton"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true" />
 
         <fragment xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:tools="http://schemas.android.com/tools"
@@ -71,9 +62,19 @@
             android:name="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true" />
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="false" />
     </RelativeLayout>
+
+    <EditText
+        android:id="@+id/editText3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/place_autocomplete_fragment"
+        android:ems="10"
+        android:inputType="textPersonName" />
 
 </RelativeLayout>

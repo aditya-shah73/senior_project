@@ -48,8 +48,6 @@ public class SearchPage extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        final Button placesButton = (Button) findViewById(R.id.placesButton);
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -72,21 +70,6 @@ public class SearchPage extends AppCompatActivity
                 .addApi(Places.PLACE_DETECTION_API)
                 .enableAutoManage(this, this)
                 .build();
-
-        //Launch Google Place Picker
-        placesButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                int PLACE_PICKER_REQUEST = 1;
-                PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
-                try {
-                    startActivityForResult(builder.build(SearchPage.this), PLACE_PICKER_REQUEST);
-                } catch (GooglePlayServicesRepairableException e) {
-                    e.printStackTrace();
-                } catch (GooglePlayServicesNotAvailableException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
 
         //Listener for AutoComplete search bar
         final PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
@@ -113,7 +96,7 @@ public class SearchPage extends AppCompatActivity
     public void onMapReady(GoogleMap googleMap) {
         // Add a marker at current location
         // and move the map's camera to the same location.
-        LatLng currentLocation = new LatLng(-33.852, 151.211);
+        LatLng currentLocation = new LatLng(-34.397, 150.644);
         googleMap.addMarker(new MarkerOptions().position(currentLocation)
                 .title("Marker in Current Place"));
         googleMap.moveCamera(CameraUpdateFactory.newLatLng(currentLocation));
@@ -130,7 +113,6 @@ public class SearchPage extends AppCompatActivity
             }
         }
     }
-
 
     @Override
     public void onBackPressed() {
