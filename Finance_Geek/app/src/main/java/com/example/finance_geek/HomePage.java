@@ -45,19 +45,21 @@ public class HomePage extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     public static class Item {
-        public String restaurant;
-        public String item;
-        public double price;
+        String restaurant;
+        String item;
+        double price;
+        String date;
 
         public Item() {
             super();
         }
 
-        public Item(String restaurantName, String itemName, double price) {
+        public Item(String restaurantName, String itemName, double price, String date) {
             super();
             this.restaurant = restaurantName;
             this.item = itemName;
             this.price = price;
+            this.date = date;
         }
 
         @Override
@@ -122,8 +124,8 @@ public class HomePage extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         //date
-        DateFormat df = new SimpleDateFormat("MMM dd, yyyy");
-        Date dateobj = new Date();
+        final DateFormat df = new SimpleDateFormat("MMM dd, yyyy");
+        final Date dateobj = new Date();
         TextView date = (TextView) findViewById(R.id.date);
         date.setText(df.format(dateobj));
 
@@ -215,7 +217,7 @@ public class HomePage extends AppCompatActivity
                 }
                 DatabaseReference itemChild = itemListChild.push();
                 Log.d("itemChild", itemChild.getKey());
-                itemChild.setValue(new Item(restaurant, item, price));
+                itemChild.setValue(new Item(restaurant, item, price, df.format(dateobj)));
 
                 //UI changes
                 restaurantText.setVisibility(View.GONE);
