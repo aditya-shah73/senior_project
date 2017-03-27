@@ -8,8 +8,14 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+        <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyA3YsKuRHIreHV0bGUKHTsURzRcYsCxsZ4" />
+            android:value="AIzaSyCfQEtxWJ-TZietvOZf-U18XBFz04VifKU" />
+        <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+        <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+        <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"

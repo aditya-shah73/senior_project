@@ -22,6 +22,12 @@ import com.google.android.gms.location.places.*;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import android.support.v4.app.FragmentActivity;
 import android.widget.Button;
@@ -31,7 +37,7 @@ import android.widget.Toast;
 
 
 public class SearchPage extends AppCompatActivity
-        implements OnConnectionFailedListener, NavigationView.OnNavigationItemSelectedListener {
+        implements OnConnectionFailedListener, NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback {
 
     private GoogleApiClient mGoogleApiClient;
 
@@ -42,8 +48,6 @@ public class SearchPage extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        final Button placesButton = (Button) findViewById(R.id.placesButton);
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -53,27 +57,19 @@ public class SearchPage extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        // Get the SupportMapFragment and request notification
+        // when the map is ready to be used.
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
+
+        //Google Place Picker
         mGoogleApiClient = new GoogleApiClient
                 .Builder(this)
                 .addApi(Places.GEO_DATA_API)
                 .addApi(Places.PLACE_DETECTION_API)
                 .enableAutoManage(this, this)
                 .build();
-
-        //Launch Google Place Picker
-        placesButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                int PLACE_PICKER_REQUEST = 1;
-                PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
-                try {
-                    startActivityForResult(builder.build(SearchPage.this), PLACE_PICKER_REQUEST);
-                } catch (GooglePlayServicesRepairableException e) {
-                    e.printStackTrace();
-                } catch (GooglePlayServicesNotAvailableException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
 
         //Listener for AutoComplete search bar
         final PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
@@ -95,6 +91,17 @@ public class SearchPage extends AppCompatActivity
         });
     }
 
+    //Google Map
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        // Add a marker at current location
+        // and move the map's camera to the same location.
+        LatLng currentLocation = new LatLng(-34.397, 150.644);
+        googleMap.addMarker(new MarkerOptions().position(currentLocation)
+                .title("Marker in Current Place"));
+        googleMap.moveCamera(CameraUpdateFactory.newLatLng(currentLocation));
+    }
+
     //Google Place Picker Listener
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         int PLACE_PICKER_REQUEST = 1;
@@ -106,7 +113,6 @@ public class SearchPage extends AppCompatActivity
             }
         }
     }
-
 
     @Override
     public void onBackPressed() {
