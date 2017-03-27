@@ -17,12 +17,17 @@ import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.places.*;
+import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlacePicker;
+import com.google.android.gms.location.places.ui.PlaceSelectionListener;
+
 import android.support.v4.app.FragmentActivity;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.view.View;
+import android.widget.Toast;
 
 
 public class SearchPage extends AppCompatActivity
@@ -55,7 +60,7 @@ public class SearchPage extends AppCompatActivity
                 .enableAutoManage(this, this)
                 .build();
 
-        // Google Place Picker button listener
+        //Launch Google Place Picker
         placesButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 int PLACE_PICKER_REQUEST = 1;
@@ -69,7 +74,39 @@ public class SearchPage extends AppCompatActivity
                 }
             }
         });
+
+        //Listener for AutoComplete search bar
+        final PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
+                getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
+
+        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onPlaceSelected(Place place) {
+                // TODO: Get info about the selected place.
+                String toastMsg = String.format("Place name: %s Rating: %s", place.getName(), place.getRating());
+                Toast.makeText(getApplicationContext(), toastMsg, Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onError(Status status) {
+                String toastMsg = String.format("Error");
+                Toast.makeText(getApplicationContext(), toastMsg, Toast.LENGTH_LONG).show();
+            }
+        });
     }
+
+    //Google Place Picker Listener
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        int PLACE_PICKER_REQUEST = 1;
+        if (requestCode == PLACE_PICKER_REQUEST) {
+            if (resultCode == RESULT_OK) {
+                Place place = PlacePicker.getPlace(data, this);
+                String toastMsg = String.format("Place name: %s Rating: %s", place.getName(), place.getRating());
+                Toast.makeText(this, toastMsg, Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
 
     @Override
     public void onBackPressed() {
@@ -86,21 +123,6 @@ public class SearchPage extends AppCompatActivity
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.search__page, menu);
         return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
