@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -18,6 +19,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.googlecode.tesseract.android.TessBaseAPI;
 
 import java.io.File;
@@ -154,7 +159,18 @@ public class ScanPage extends AppCompatActivity
         String OCRresult = null;
         mTess.setImage(image);
         OCRresult = mTess.getUTF8Text();
+        Log.v("OCR Message", OCRresult);
         TextView OCRTextView = (TextView) findViewById(R.id.OCRTextView);
         OCRTextView.setText(OCRresult);
+        writeToDB(OCRresult);
+    }
+
+    public void writeToDB(String s)
+    {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        final DatabaseReference myRef = database.getReference(user.getUid());
+        final DatabaseReference itemListChild = myRef.child("Tesseract");
+        itemListChild.setValue(s);
     }
 }
