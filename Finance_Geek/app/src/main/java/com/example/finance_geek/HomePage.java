@@ -104,6 +104,7 @@ public class HomePage extends AppCompatActivity
                 }
                 else {
                     restaurantText.setVisibility(View.GONE);
+                    restaurantText.setText(null);
                     itemText.setVisibility(View.GONE);
                     itemText.setText(null);
                     priceText.setVisibility(View.GONE);
@@ -152,7 +153,6 @@ public class HomePage extends AppCompatActivity
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         final DatabaseReference myRef = database.getReference(user.getUid());
         final DatabaseReference itemListChild = myRef.child("Item List");
-
 
         // Assign a listener to detect changes to the child items
         // of the database reference.
