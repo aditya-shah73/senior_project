@@ -240,7 +240,7 @@ public class HomePage extends AppCompatActivity
                 Query myQuery = itemListChild.orderByKey().equalTo(
                         listView.getItemAtPosition(position).toString());
 
-                Log.d("data", itemListChild.orderByValue().toString());
+                Log.d("data", listView.getItemAtPosition(position).toString());
 
                 myQuery.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
