@@ -29,4 +29,13 @@
         android:onClick="takePicture"
         android:text="Take a picture!"/>
 
+    <Button
+        android:id="@+id/select_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/imageview"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="22dp"
+        android:text="Select From Gallery" />
+
 </RelativeLayout>

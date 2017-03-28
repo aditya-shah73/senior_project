@@ -2,6 +2,7 @@ package com.example.finance_geek;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -22,7 +23,16 @@ import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Toast;
 
+
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.iid.FirebaseInstanceIdService;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -32,8 +42,11 @@ public class ReportPage extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private Button takePictureButton;
+    private Button selectPictureButton;
     private ImageView imageView;
     private Uri file;
+    private StorageReference myStorage;
+    private static final int GALLERY_INTENT = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +64,7 @@ public class ReportPage extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        //take picture
         takePictureButton = (Button) findViewById(R.id.button_image);
         imageView = (ImageView) findViewById(R.id.imageview);
 
@@ -58,6 +72,22 @@ public class ReportPage extends AppCompatActivity
             takePictureButton.setEnabled(false);
             ActivityCompat.requestPermissions(this, new String[] { Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE }, 0);
         }
+
+        //select image from gallery
+        myStorage = FirebaseStorage.getInstance().getReference();
+
+        selectPictureButton = (Button) findViewById(R.id.select_image);
+
+        selectPictureButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(Intent.ACTION_PICK);
+                intent.setType("image/*");
+                startActivityForResult(intent, GALLERY_INTENT);
+            }
+        });
+
+
     }
 
     @Override
@@ -110,6 +140,18 @@ public class ReportPage extends AppCompatActivity
             if (resultCode == RESULT_OK) {
                 imageView.setImageURI(file);
             }
+        }
+
+        if(requestCode == GALLERY_INTENT && resultCode == RESULT_OK) {
+            Uri uri = data.getData();
+
+            StorageReference filepath = myStorage.child("Photos").child(uri.getLastPathSegment());
+            filepath.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    Toast.makeText(ReportPage.this, "Sucessful", Toast.LENGTH_LONG).show();
+                }
+            });
         }
     }
 

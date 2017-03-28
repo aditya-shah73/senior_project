@@ -237,7 +237,7 @@ public class HomePage extends AppCompatActivity
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
 
-                Query myQuery = itemListChild.orderByKey().equalTo(
+                Query myQuery = itemListChild.equalTo(
                         listView.getItemAtPosition(position).toString());
 
                 Log.d("data", listView.getItemAtPosition(position).toString());
