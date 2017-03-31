@@ -1,9 +1,11 @@
 package com.example.finance_geek;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -15,12 +17,19 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.googlecode.tesseract.android.TessBaseAPI;
 
 import java.io.File;
@@ -32,6 +41,11 @@ import java.io.OutputStream;
 
 public class ScanPage extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    private Button selectPictureButton;
+    private ImageView imageView;
+    private StorageReference myStorage;
+    private static final int GALLERY_INTENT = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +63,21 @@ public class ScanPage extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        myStorage = FirebaseStorage.getInstance().getReference();
+
+        //select image from gallery
+        selectPictureButton = (Button) findViewById(R.id.select_image);
+
+        selectPictureButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(Intent.ACTION_PICK);
+                intent.setType("image/*");
+                startActivityForResult(intent, GALLERY_INTENT);
+            }
+        });
+
+        /*
         //init image
         image = BitmapFactory.decodeResource(getResources(), R.drawable.test_image);
 
@@ -61,7 +90,22 @@ public class ScanPage extends AppCompatActivity
         String language = "eng";
 
         mTess = new TessBaseAPI();
-        mTess.init(datapath, language);
+        mTess.init(datapath, language);*/
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == GALLERY_INTENT && resultCode == RESULT_OK) {
+            Uri uri = data.getData();
+
+            StorageReference filepath = myStorage.child("Photos").child(uri.getLastPathSegment());
+            filepath.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    Toast.makeText(ScanPage.this, "Sucessful", Toast.LENGTH_LONG).show();
+                }
+            });
+        }
     }
 
     @Override
@@ -107,7 +151,7 @@ public class ScanPage extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
-
+    /*
     Bitmap image; //our image
     private TessBaseAPI mTess; //Tess API reference
     String datapath = ""; //path to folder containing language data file
@@ -170,5 +214,5 @@ public class ScanPage extends AppCompatActivity
         final DatabaseReference myRef = database.getReference(user.getUid());
         final DatabaseReference itemListChild = myRef.child("Tesseract");
         itemListChild.setValue(s);
-    }
+    }*/
 }
