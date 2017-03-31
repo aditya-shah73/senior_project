@@ -166,9 +166,9 @@ public class ReportPage extends AppCompatActivity
         public CharSequence getPageTitle(int position) {
             switch (position) {
                 case 0:
-                    return "SECTION 1";
+                    return "Weekly Report";
                 case 1:
-                    return "SECTION 2";
+                    return "History";
             }
             return null;
         }
