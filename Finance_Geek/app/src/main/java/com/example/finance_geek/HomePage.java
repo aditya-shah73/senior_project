@@ -77,6 +77,7 @@ public class HomePage extends AppCompatActivity
     }
 
     int counter = 0; //counter for the + widget
+    Double sum = 0.0; //total price
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -135,6 +136,8 @@ public class HomePage extends AppCompatActivity
         final EditText priceText = (EditText) findViewById(R.id.priceText);
         final Button button = (Button) findViewById(R.id.addButton);
 
+        final TextView totalPrice = (TextView) findViewById(R.id.totalPrice);
+
         // Get ListView object from xml
         final ListView listView = (ListView) findViewById(R.id.listView);
 
@@ -163,6 +166,12 @@ public class HomePage extends AppCompatActivity
             public void onChildAdded(DataSnapshot dataSnapshot, String previousChildName) {
                 Item value = dataSnapshot.getValue(Item.class);
                 adapter.add(value);
+
+                //get total price
+                Double doublePrice = value.price;
+                sum = sum + doublePrice;
+                String stringPrice = String.valueOf(sum);
+                totalPrice.setText("Total: $" + stringPrice);
             }
 
             // This function is called each time a child item is removed.
