@@ -201,7 +201,7 @@ public class HomePage extends AppCompatActivity
 
                 //check if input is null
                 if (restaurant.equals("")) {
-                    Toast.makeText(getApplicationContext(), "You did not enter a restraunt", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "You did not enter a restaurant", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 else if(item.equals("")) {
