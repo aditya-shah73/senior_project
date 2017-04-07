@@ -127,6 +127,7 @@ public class ScanPage extends AppCompatActivity
                     Toast.makeText(ScanPage.this, "Sucessful", Toast.LENGTH_LONG).show();
                 }
             });
+            imageView.setImageURI(uri);
         }
 
         if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
