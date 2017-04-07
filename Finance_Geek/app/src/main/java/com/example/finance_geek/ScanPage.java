@@ -5,8 +5,13 @@ import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
+import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -38,14 +43,19 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class ScanPage extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private Button selectPictureButton;
+    private Button uploadButton;
     private ImageView imageView;
     private StorageReference myStorage;
     private static final int GALLERY_INTENT = 2;
+    private static final int REQUEST_TAKE_PHOTO = 1;
+    String CurrentPhotoPath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,15 +75,27 @@ public class ScanPage extends AppCompatActivity
 
         myStorage = FirebaseStorage.getInstance().getReference();
 
-        //select image from gallery
         selectPictureButton = (Button) findViewById(R.id.select_image);
+        uploadButton = (Button)findViewById(R.id.upload);
+        imageView = (ImageView)findViewById(R.id.imageView);
 
+        //select image from gallery
         selectPictureButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(Intent.ACTION_PICK);
                 intent.setType("image/*");
                 startActivityForResult(intent, GALLERY_INTENT);
+            }
+        });
+
+        //take picture
+        uploadButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view){
+                //Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                dispatchTakePictureIntent();
+                //startActivityForResult(intent, REQUEST_TAKE_PHOTO);
             }
         });
 
@@ -105,6 +127,12 @@ public class ScanPage extends AppCompatActivity
                     Toast.makeText(ScanPage.this, "Sucessful", Toast.LENGTH_LONG).show();
                 }
             });
+        }
+
+        if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
+            Bundle extras = data.getExtras();
+            Bitmap imageBitmap = (Bitmap) extras.get("data");
+            imageView.setImageBitmap(imageBitmap);
         }
     }
 
@@ -151,6 +179,79 @@ public class ScanPage extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+    private void dispatchTakePictureIntent() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        // Ensure that there's a camera activity to handle the intent
+        // if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+        // Create the File where the photo should go
+        // File photoFile = null;
+//            try {
+//                Log.d("CameraSample", "creating image file");
+//                photoFile = createImageFile();
+//            } catch (IOException ex) {
+//                // Error occurred while creating the File
+//                Log.d("CameraSample", "failed to create image file");
+//            }
+//            // Continue only if the File was successfully created
+        // if (photoFile != null) {
+
+        Uri photoURI = getLocalBitmapUri(imageView);
+        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+        startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
+//            }
+        // }
+    }
+
+    public Uri getLocalBitmapUri(ImageView imageView) {
+        // Extract Bitmap from ImageView drawable
+        Drawable drawable = imageView.getDrawable();
+        Bitmap bmp = null;
+        if (drawable instanceof BitmapDrawable){
+            bmp = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
+        } else {
+            return null;
+        }
+        // Store image to default external storage directory
+        Uri photoURI = null;
+        try {
+            // Use methods on Context to access package-specific directories on external storage.
+            // This way, you don't need to request external read/write permission.
+            // See https://youtu.be/5xVh-7ywKpE?t=25m25s
+            File file =  new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), "share_image_" + System.currentTimeMillis() + ".png");
+            FileOutputStream out = new FileOutputStream(file);
+            bmp.compress(Bitmap.CompressFormat.PNG, 90, out);
+            out.close();
+            // **Warning:** This will fail for API >= 24, use a FileProvider as shown below instead.
+            //bmpUri = Uri.fromFile(file);
+
+            photoURI = FileProvider.getUriForFile(this,
+                    "com.example.finance_geek.fileprovider",
+                    file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return photoURI;
+    }
+
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File image = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), imageFileName + timeStamp);
+//        File image = File.createTempFile(
+//                imageFileName,  /* prefix */
+//                ".jpg",         /* suffix */
+//                storageDir      /* directory */
+//        );
+
+        // Save a file: path for use with ACTION_VIEW intents
+
+        CurrentPhotoPath = image.getAbsolutePath();
+        return image;
+    }
+
+
     /*
     Bitmap image; //our image
     private TessBaseAPI mTess; //Tess API reference
