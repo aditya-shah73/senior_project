@@ -70,10 +70,10 @@ public class HomePage extends AppCompatActivity
                     + "Price: " + priceFormatter.format(price);
         }
 
-        @Override
+        /*@Override
         public boolean equals(Object object) {
             return (this == object);
-        }
+        }*/
     }
 
     int counter = 0; //counter for the + widget
@@ -165,12 +165,14 @@ public class HomePage extends AppCompatActivity
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String previousChildName) {
                 Item value = dataSnapshot.getValue(Item.class);
-                adapter.add(value);
+                if(value.date.equals(df.format(dateobj))) {
+                    adapter.add(value);
+                }
 
                 //get total price
                 Double doublePrice = value.price;
                 sum = sum + doublePrice;
-                String stringPrice = String.valueOf(sum);
+                String stringPrice = String.valueOf(Math.floor(sum * 100) / 100);
                 totalPrice.setText("Total: $" + stringPrice);
             }
 
