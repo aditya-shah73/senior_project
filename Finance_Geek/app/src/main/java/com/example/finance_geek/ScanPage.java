@@ -1,7 +1,6 @@
 package com.example.finance_geek;
 
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -26,7 +25,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -36,15 +34,10 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.googlecode.tesseract.android.TessBaseAPI;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.*;
+import java.util.regex.*;
 
 public class ScanPage extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -56,6 +49,9 @@ public class ScanPage extends AppCompatActivity
     private static final int GALLERY_INTENT = 2;
     private static final int REQUEST_TAKE_PHOTO = 1;
     String CurrentPhotoPath;
+    Bitmap image;
+    private TessBaseAPI mTess;
+    String datapath = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,7 +95,7 @@ public class ScanPage extends AppCompatActivity
             }
         });
 
-        /*
+
         //init image
         image = BitmapFactory.decodeResource(getResources(), R.drawable.test_image);
 
@@ -112,7 +108,7 @@ public class ScanPage extends AppCompatActivity
         String language = "eng";
 
         mTess = new TessBaseAPI();
-        mTess.init(datapath, language);*/
+        mTess.init(datapath, language);
     }
 
     @Override
@@ -183,25 +179,9 @@ public class ScanPage extends AppCompatActivity
 
     private void dispatchTakePictureIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        // Ensure that there's a camera activity to handle the intent
-        // if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-        // Create the File where the photo should go
-        // File photoFile = null;
-//            try {
-//                Log.d("CameraSample", "creating image file");
-//                photoFile = createImageFile();
-//            } catch (IOException ex) {
-//                // Error occurred while creating the File
-//                Log.d("CameraSample", "failed to create image file");
-//            }
-//            // Continue only if the File was successfully created
-        // if (photoFile != null) {
-
         Uri photoURI = getLocalBitmapUri(imageView);
         takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
         startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
-//            }
-        // }
     }
 
     public Uri getLocalBitmapUri(ImageView imageView) {
@@ -216,16 +196,11 @@ public class ScanPage extends AppCompatActivity
         // Store image to default external storage directory
         Uri photoURI = null;
         try {
-            // Use methods on Context to access package-specific directories on external storage.
-            // This way, you don't need to request external read/write permission.
-            // See https://youtu.be/5xVh-7ywKpE?t=25m25s
             File file =  new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), "share_image_" + System.currentTimeMillis() + ".png");
             FileOutputStream out = new FileOutputStream(file);
             bmp.compress(Bitmap.CompressFormat.PNG, 90, out);
             out.close();
             // **Warning:** This will fail for API >= 24, use a FileProvider as shown below instead.
-            //bmpUri = Uri.fromFile(file);
-
             photoURI = FileProvider.getUriForFile(this,
                     "com.example.finance_geek.fileprovider",
                     file);
@@ -240,23 +215,11 @@ public class ScanPage extends AppCompatActivity
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
         File image = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), imageFileName + timeStamp);
-//        File image = File.createTempFile(
-//                imageFileName,  /* prefix */
-//                ".jpg",         /* suffix */
-//                storageDir      /* directory */
-//        );
-
-        // Save a file: path for use with ACTION_VIEW intents
-
         CurrentPhotoPath = image.getAbsolutePath();
         return image;
     }
 
 
-    /*
-    Bitmap image; //our image
-    private TessBaseAPI mTess; //Tess API reference
-    String datapath = ""; //path to folder containing language data file
     private void copyFiles() {
         try {
             //location we want the file to be at
@@ -307,6 +270,22 @@ public class ScanPage extends AppCompatActivity
         TextView OCRTextView = (TextView) findViewById(R.id.OCRTextView);
         OCRTextView.setText(OCRresult);
         writeToDB(OCRresult);
+
+        String pattern = "(\\n)(\\d)(.*?)(\\$)((.)*)";
+        Pattern r = Pattern.compile(pattern);
+        Matcher m = r.matcher(OCRresult);
+
+        ArrayList itemName = new ArrayList();
+        ArrayList itemPrice = new ArrayList();
+
+        if(m.find()) {
+            OCRTextView.setText(m.group(5));
+            itemName.add(m.group(3));
+            itemPrice.add(m.group(5));
+            Log.v("Item Name", String.valueOf(itemName));
+            Log.v("Item Price", String.valueOf(itemPrice));
+
+        }
     }
 
     public void writeToDB(String s)
@@ -316,5 +295,5 @@ public class ScanPage extends AppCompatActivity
         final DatabaseReference myRef = database.getReference(user.getUid());
         final DatabaseReference itemListChild = myRef.child("Tesseract");
         itemListChild.setValue(s);
-    }*/
+    }
 }
