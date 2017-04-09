@@ -20,8 +20,7 @@ public class ReportGraph extends Fragment {
     PieChart chartView;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.tab1_report, container, false);
         chartView = (PieChart) rootView.findViewById(R.id.chart);
         setupPieCharts();
@@ -31,6 +30,7 @@ public class ReportGraph extends Fragment {
     private void setupPieCharts(){
 
         List<PieEntry> pieEntry = new ArrayList<>();
+
         for(int i = 0;i< prices.length; i++)
         {
             pieEntry.add(new PieEntry(prices[i], months[i]));
@@ -38,7 +38,6 @@ public class ReportGraph extends Fragment {
 
         PieDataSet dataSet = new PieDataSet(pieEntry, "Prices for food");
         PieData data = new PieData(dataSet);
-
         chartView.setData(data);
         chartView.invalidate();
     }
