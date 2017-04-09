@@ -13,11 +13,6 @@
     tools:context="com.example.finance_geek.ReportPage"
     tools:showIn="@layout/app_bar_report__page">
 
-    <com.github.mikephil.charting.charts.PieChart
-        android:id="@+id/chart"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
     <TextView
         android:id="@+id/section_label"
         android:layout_width="wrap_content"
