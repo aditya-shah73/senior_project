@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -35,9 +36,13 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.lang.reflect.Array;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 
 public class HomePage extends AppCompatActivity
@@ -78,6 +83,10 @@ public class HomePage extends AppCompatActivity
 
     int counter = 0; //counter for the + widget
     Double sum = 0.0; //total price
+
+    //data to send to Report Page
+    final static ArrayList<Float> priceData = new ArrayList<Float>();
+    final static ArrayList<String> dateData = new ArrayList<String>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -137,6 +146,7 @@ public class HomePage extends AppCompatActivity
         final Button button = (Button) findViewById(R.id.addButton);
 
         final TextView totalPrice = (TextView) findViewById(R.id.totalPrice);
+        totalPrice.setText("Total: $0.00");
 
         // Get ListView object from xml
         final ListView listView = (ListView) findViewById(R.id.listView);
@@ -159,6 +169,7 @@ public class HomePage extends AppCompatActivity
         // Assign a listener to detect changes to the child items
         // of the database reference.
         itemListChild.addChildEventListener(new ChildEventListener(){
+
             // This function is called once for each child that exists
             // when the listener is added. Then it is called
             // each time a new child is added.
@@ -167,13 +178,25 @@ public class HomePage extends AppCompatActivity
                 Item value = dataSnapshot.getValue(Item.class);
                 if(value.date.equals(df.format(dateobj))) {
                     adapter.add(value);
+
+                    priceData.add((float)value.price);
+                    dateData.add(value.date);
+
+                    Log.v("Price: ", Arrays.toString(priceData.toArray()));
+                    Log.v("Date: ", Arrays.toString(dateData.toArray()));
                 }
 
-                //get total price
-                Double doublePrice = value.price;
-                sum = sum + doublePrice;
-                String stringPrice = String.valueOf(Math.floor(sum * 100) / 100);
-                totalPrice.setText("Total: $" + stringPrice);
+                //updating total price
+                if(adapter.isEmpty()) {
+                    totalPrice.setText("Total: $0.00");
+                }
+                else {
+                    //get total price
+                    Double doublePrice = value.price;
+                    sum = sum + doublePrice;
+                    String stringPrice = String.valueOf(String.format("%.2f", sum)); //2 decimal places
+                    totalPrice.setText("Total: $" + stringPrice);
+                }
             }
 
             // This function is called each time a child item is removed.
@@ -223,8 +246,8 @@ public class HomePage extends AppCompatActivity
                         Toast.makeText(getApplicationContext(), "Enter a numerical price", Toast.LENGTH_SHORT).show();
                         return;
                     }
-
                 }
+
                 DatabaseReference itemChild = itemListChild.push();
                 Log.d("itemChild", itemChild.getKey());
                 itemChild.setValue(new Item(restaurant, item, price, df.format(dateobj)));
@@ -340,5 +363,13 @@ public class HomePage extends AppCompatActivity
             InputMethodManager imm = (InputMethodManager)activity.getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(activity.getWindow().getDecorView().getWindowToken(), 0);
         }
+    }
+
+    public static ArrayList getPriceData() {
+        return priceData;
+    }
+
+    public static ArrayList getDateData() {
+        return dateData;
     }
 }

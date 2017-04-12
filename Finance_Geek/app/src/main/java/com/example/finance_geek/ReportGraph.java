@@ -1,7 +1,9 @@
 package com.example.finance_geek;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +14,7 @@ import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class ReportGraph extends Fragment {
@@ -30,11 +33,17 @@ public class ReportGraph extends Fragment {
 
     private void setupPieCharts(){
 
+        HomePage activity = new HomePage();
+        ArrayList<Float> priceData = activity.getPriceData();
+        ArrayList<String> dateData = activity.getDateData();
+        Log.v("Price in ReportGraph: ", Arrays.toString(priceData.toArray()));
+        Log.v("Date in ReportGraph: ", Arrays.toString(dateData.toArray()));
+
         List<PieEntry> pieEntry = new ArrayList<>();
 
-        for(int i = 0;i< prices.length; i++)
+        for(int i = 0; i < priceData.size(); i++)
         {
-            pieEntry.add(new PieEntry(prices[i], months[i]));
+            pieEntry.add(new PieEntry(priceData.get(i), dateData.get(i)));
         }
 
         PieDataSet dataSet = new PieDataSet(pieEntry, "Prices for food");
