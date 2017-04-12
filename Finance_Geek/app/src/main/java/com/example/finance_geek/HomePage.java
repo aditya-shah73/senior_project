@@ -84,6 +84,10 @@ public class HomePage extends AppCompatActivity
     int counter = 0; //counter for the + widget
     Double sum = 0.0; //total price
 
+    //data to send to Report Page
+    final static ArrayList<Float> priceData = new ArrayList<Float>();
+    final static ArrayList<String> dateData = new ArrayList<String>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -128,10 +132,6 @@ public class HomePage extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
-        //data to send to Report Page
-        final ArrayList<Double> priceData = new ArrayList<Double>();
-        final ArrayList<String> dateData = new ArrayList<String>();
 
         //date
         final DateFormat df = new SimpleDateFormat("MMM dd, yyyy");
@@ -179,18 +179,11 @@ public class HomePage extends AppCompatActivity
                 if(value.date.equals(df.format(dateobj))) {
                     adapter.add(value);
 
-                    priceData.add(value.price);
+                    priceData.add((float)value.price);
                     dateData.add(value.date);
 
                     Log.v("Price: ", Arrays.toString(priceData.toArray()));
                     Log.v("Date: ", Arrays.toString(dateData.toArray()));
-
-                /*
-                //pass data to Report Page
-                Intent intent = new Intent(getApplicationContext(), ReportPage.class);
-                intent.putExtra("PRICE_DATA", priceData);
-                //intent.putExtra("DATE_DATA", dateData);
-                startActivity(intent);*/
                 }
 
                 //updating total price
@@ -370,5 +363,13 @@ public class HomePage extends AppCompatActivity
             InputMethodManager imm = (InputMethodManager)activity.getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(activity.getWindow().getDecorView().getWindowToken(), 0);
         }
+    }
+
+    public static ArrayList getPriceData() {
+        return priceData;
+    }
+
+    public static ArrayList getDateData() {
+        return dateData;
     }
 }

@@ -96,6 +96,9 @@
             </intent-filter>
         </activity>
 
+        <fragment android:name=".ReportGraph" />
+        <fragment android:name=".ReportHistory" />
+
     </application>
 
 </manifest>
