@@ -31,7 +31,7 @@ public class ReportGraph extends Fragment {
 
         List<PieEntry> pieEntry = new ArrayList<>();
 
-        for(int i = 0;i< prices.length; i++)
+        for(int i = 0; i < prices.length; i++)
         {
             pieEntry.add(new PieEntry(prices[i], months[i]));
         }
