@@ -1,9 +1,7 @@
 package com.example.finance_geek;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,22 +10,12 @@ import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.utils.ColorTemplate;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 public class ReportGraph extends Fragment {
-
-    float prices[] = {10,20,30,50,60,20,45,12,28,40,18,15};
-    String months[] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
     PieChart chartView;
-    ArrayList<Float> totalPriceData = new ArrayList<Float>();
-    ArrayList<String> totalDateData = new ArrayList<String>();
+    ArrayList<Float> totalPriceData = new ArrayList<>();
+    ArrayList<String> totalDateData = new ArrayList<>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -37,13 +25,9 @@ public class ReportGraph extends Fragment {
         return rootView;
     }
 
-    private void setupPieCharts(){
-
+    private void setupPieCharts() {
         HomePage activity = new HomePage();
         HashMap<String, Double> data_price_data = activity.getPriceDateData();
-
-        //totalPriceData.addAll(priceData);
-        //totalDateData.addAll(dateData);
 
         for(Map.Entry<String, Double> entry : data_price_data.entrySet())
         {
@@ -52,9 +36,6 @@ public class ReportGraph extends Fragment {
             totalDateData.add(entry.getKey());
             totalPriceData.add((float) value);
         }
-
-        //Log.v("Price in ReportGraph: ", Arrays.toString(totalPriceData.toArray()));
-        //Log.v("Date in ReportGraph: ", Arrays.toString(totalDateData.toArray()));
 
         List<PieEntry> pieEntry = new ArrayList<>();
 
@@ -69,7 +50,7 @@ public class ReportGraph extends Fragment {
         chartView.invalidate();
         chartView.setDrawEntryLabels(true);
 
-        ArrayList<Integer> colors = new ArrayList<Integer>();
+        ArrayList<Integer> colors = new ArrayList<>();
 
         for (int c : ColorTemplate.VORDIPLOM_COLORS)
             colors.add(c);
