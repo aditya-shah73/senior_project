@@ -2,7 +2,7 @@
     <string name="app_name">Finance_Geek</string>
     <string name="action_settings">Settings</string>
     <dimen name="font_size">25dp</dimen>
-    <color name="green">#96e05e</color>
+    <color name="green">#7fc967</color>
     <color name="white">#FFFFFF</color>
     <string name="title_activity_home__page">HomePage</string>
 

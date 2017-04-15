@@ -14,13 +14,19 @@ import com.github.mikephil.charting.data.PieEntry;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class ReportGraph extends Fragment {
 
     float prices[] = {10,20,30,50,60,20,45,12,28,40,18,15};
     String months[] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
     PieChart chartView;
+    ArrayList<Float> totalPriceData = new ArrayList<Float>();
+    ArrayList<String> totalDateData = new ArrayList<String>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -33,16 +39,27 @@ public class ReportGraph extends Fragment {
     private void setupPieCharts(){
 
         HomePage activity = new HomePage();
-        ArrayList<Float> priceData = activity.getPriceData();
-        ArrayList<String> dateData = activity.getDateData();
-        Log.v("Price in ReportGraph: ", Arrays.toString(priceData.toArray()));
-        Log.v("Date in ReportGraph: ", Arrays.toString(dateData.toArray()));
+        HashMap<String, Double> data_price_data = activity.getPriceDateData();
+
+        //totalPriceData.addAll(priceData);
+        //totalDateData.addAll(dateData);
+
+        for(Map.Entry<String, Double> entry : data_price_data.entrySet())
+        {
+            double value = entry.getValue();
+
+            totalDateData.add(entry.getKey());
+            totalPriceData.add((float) value);
+        }
+
+        //Log.v("Price in ReportGraph: ", Arrays.toString(totalPriceData.toArray()));
+        //Log.v("Date in ReportGraph: ", Arrays.toString(totalDateData.toArray()));
 
         List<PieEntry> pieEntry = new ArrayList<>();
 
-        for(int i = 0; i < priceData.size(); i++)
+        for(int i = 0; i < totalPriceData.size(); i++)
         {
-            pieEntry.add(new PieEntry(priceData.get(i), dateData.get(i)));
+            pieEntry.add(new PieEntry(totalPriceData.get(i), totalDateData.get(i)));
         }
 
         PieDataSet dataSet = new PieDataSet(pieEntry, "Prices for food");

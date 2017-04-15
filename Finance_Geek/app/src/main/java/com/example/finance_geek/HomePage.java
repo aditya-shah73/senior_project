@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -44,6 +43,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class HomePage extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -82,11 +85,11 @@ public class HomePage extends AppCompatActivity
     }
 
     int counter = 0; //counter for the + widget
-    Double sum = 0.0; //total price
+    double sum = 0.0; //total price
 
     //data to send to Report Page
-    final static ArrayList<Float> priceData = new ArrayList<Float>();
-    final static ArrayList<String> dateData = new ArrayList<String>();
+    final static HashMap<String, Double> data_price_date = new HashMap<>();
+    String data_date;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -179,11 +182,8 @@ public class HomePage extends AppCompatActivity
                 if(value.date.equals(df.format(dateobj))) {
                     adapter.add(value);
 
-                    priceData.add((float)value.price);
-                    dateData.add(value.date);
-
-                    Log.v("Price: ", Arrays.toString(priceData.toArray()));
-                    Log.v("Date: ", Arrays.toString(dateData.toArray()));
+                    //priceData.add((float)value.price);
+                    data_date = value.date;
                 }
 
                 //updating total price
@@ -196,7 +196,23 @@ public class HomePage extends AppCompatActivity
                     sum = sum + doublePrice;
                     String stringPrice = String.valueOf(String.format("%.2f", sum)); //2 decimal places
                     totalPrice.setText("Total: $" + stringPrice);
+
+                    if(data_price_date.containsKey(data_date))
+                    {
+                        data_price_date.put(data_date, sum);
+                    }
+                    else
+                    {
+                        data_price_date.put(data_date, sum);
+                    }
                 }
+
+                for(Map.Entry<String, Double> entry : data_price_date.entrySet())
+                {
+                    Log.v("Price in HomePage: ", entry.getValue().toString());
+                    Log.v("Date in HomePage: ", entry.getKey());
+                }
+
             }
 
             // This function is called each time a child item is removed.
@@ -365,11 +381,7 @@ public class HomePage extends AppCompatActivity
         }
     }
 
-    public static ArrayList getPriceData() {
-        return priceData;
-    }
-
-    public static ArrayList getDateData() {
-        return dateData;
+    public static HashMap getPriceDateData() {
+        return data_price_date;
     }
 }
