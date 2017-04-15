@@ -97,7 +97,7 @@ public class ScanPage extends AppCompatActivity
 
 
         //init image
-        image = BitmapFactory.decodeResource(getResources(), R.drawable.test_image);
+        image = BitmapFactory.decodeResource(getResources(), R.drawable.anne);
 
         datapath = getFilesDir()+ "/tesseract/";
 
@@ -124,6 +124,13 @@ public class ScanPage extends AppCompatActivity
                 }
             });
             imageView.setImageURI(uri);
+            try {
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
+                image = bitmap;
+                processImage();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
@@ -262,7 +269,7 @@ public class ScanPage extends AppCompatActivity
             }
         }
     }
-    public void processImage(View view){
+    public void processImage(){
         String OCRresult = null;
         mTess.setImage(image);
         OCRresult = mTess.getUTF8Text();
@@ -278,13 +285,12 @@ public class ScanPage extends AppCompatActivity
         ArrayList itemName = new ArrayList();
         ArrayList itemPrice = new ArrayList();
 
-        if(m.find()) {
+        while(m.find()) {
             OCRTextView.setText(m.group(5));
             itemName.add(m.group(3));
             itemPrice.add(m.group(5));
             Log.v("Item Name", String.valueOf(itemName));
             Log.v("Item Price", String.valueOf(itemPrice));
-
         }
     }
 
