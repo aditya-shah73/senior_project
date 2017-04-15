@@ -9,15 +9,13 @@ import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.github.mikephil.charting.utils.ColorTemplate;
+import java.util.*;
 
 public class ReportGraph extends Fragment {
-
-    float prices[] = {10,20,30,50,60,20,45,12,28,40,18,15};
-    String months[] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
     PieChart chartView;
+    ArrayList<Float> totalPriceData = new ArrayList<>();
+    ArrayList<String> totalDateData = new ArrayList<>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -27,18 +25,50 @@ public class ReportGraph extends Fragment {
         return rootView;
     }
 
-    private void setupPieCharts(){
+    private void setupPieCharts() {
+        HomePage activity = new HomePage();
+        HashMap<String, Double> data_price_data = activity.getPriceDateData();
+
+        for(Map.Entry<String, Double> entry : data_price_data.entrySet())
+        {
+            double value = entry.getValue();
+
+            totalDateData.add(entry.getKey());
+            totalPriceData.add((float) value);
+        }
 
         List<PieEntry> pieEntry = new ArrayList<>();
 
-        for(int i = 0;i< prices.length; i++)
+        for(int i = 0; i < totalPriceData.size(); i++)
         {
-            pieEntry.add(new PieEntry(prices[i], months[i]));
+            pieEntry.add(new PieEntry(totalPriceData.get(i), totalDateData.get(i)));
         }
 
         PieDataSet dataSet = new PieDataSet(pieEntry, "Prices for food");
         PieData data = new PieData(dataSet);
         chartView.setData(data);
         chartView.invalidate();
+        chartView.setDrawEntryLabels(true);
+
+        ArrayList<Integer> colors = new ArrayList<>();
+
+        for (int c : ColorTemplate.VORDIPLOM_COLORS)
+            colors.add(c);
+
+        for (int c : ColorTemplate.JOYFUL_COLORS)
+            colors.add(c);
+
+        for (int c : ColorTemplate.COLORFUL_COLORS)
+            colors.add(c);
+
+        for (int c : ColorTemplate.LIBERTY_COLORS)
+            colors.add(c);
+
+        for (int c : ColorTemplate.PASTEL_COLORS)
+            colors.add(c);
+
+        colors.add(ColorTemplate.getHoloBlue());
+
+        dataSet.setColors(colors);
     }
 }

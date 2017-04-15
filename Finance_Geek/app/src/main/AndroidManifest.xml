@@ -96,6 +96,10 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+
+        <fragment android:name=".ReportGraph" />
+        <fragment android:name=".ReportHistory" />
+
     </application>
 
 </manifest>
