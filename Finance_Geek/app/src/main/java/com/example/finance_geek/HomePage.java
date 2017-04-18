@@ -78,10 +78,9 @@ public class HomePage extends AppCompatActivity
                     + "Price: " + priceFormatter.format(price);
         }
 
-        /*@Override
-        public boolean equals(Object object) {
-            return (this == object);
-        }*/
+        public boolean equals(String value1, String value2, double value3) {
+            return this.restaurant == value1 && this.item == value2 && this.price == value3;
+        }
     }
 
     int counter = 0; //counter for the + widget
@@ -182,7 +181,6 @@ public class HomePage extends AppCompatActivity
                 if(value.date.equals(df.format(dateobj))) {
                     adapter.add(value);
 
-                    //priceData.add((float)value.price);
                     data_date = value.date;
                 }
 
@@ -197,6 +195,7 @@ public class HomePage extends AppCompatActivity
                     String stringPrice = String.valueOf(String.format("%.2f", sum)); //2 decimal places
                     totalPrice.setText("Total: $" + stringPrice);
 
+                    //pass data to report page
                     if(data_price_date.containsKey(data_date))
                     {
                         data_price_date.put(data_date, sum);
@@ -205,12 +204,6 @@ public class HomePage extends AppCompatActivity
                     {
                         data_price_date.put(data_date, sum);
                     }
-                }
-
-                for(Map.Entry<String, Double> entry : data_price_date.entrySet())
-                {
-                    Log.v("Price in HomePage: ", entry.getValue().toString());
-                    Log.v("Date in HomePage: ", entry.getKey());
                 }
 
             }
@@ -286,10 +279,16 @@ public class HomePage extends AppCompatActivity
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
 
-                Query myQuery = itemListChild.equalTo(
-                        listView.getItemAtPosition(position).toString());
+                Item item = (Item) listView.getItemAtPosition(position);
+                String restaurantValue = item.restaurant;
+                String itemValue = item.item;
+                double priceValue = item.price;
 
-                Log.d("data", listView.getItemAtPosition(position).toString());
+                Query myQuery = itemListChild.orderByChild("item").equalTo(restaurantValue);
+
+                Log.v("Restaurant", restaurantValue);
+                Log.v("Item", itemValue);
+                Log.v("Price", Double.toString(priceValue));
 
                 myQuery.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
