@@ -1,14 +1,18 @@
 package com.example.finance_geek;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -18,6 +22,7 @@ import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.*;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlacePicker;
@@ -40,6 +45,9 @@ public class SearchPage extends AppCompatActivity
         implements OnConnectionFailedListener, NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback {
 
     private GoogleApiClient mGoogleApiClient;
+    protected Location mLastLocation;
+    protected double mLatitudeText;
+    protected double mLongitudeText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +74,10 @@ public class SearchPage extends AppCompatActivity
         //Google Place Picker
         mGoogleApiClient = new GoogleApiClient
                 .Builder(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(Places.GEO_DATA_API)
+                .addApi(Places.PLACE_DETECTION_API)
+                .addApi(LocationServices.API)
                 .addApi(Places.GEO_DATA_API)
                 .addApi(Places.PLACE_DETECTION_API)
                 .enableAutoManage(this, this)
@@ -91,12 +103,32 @@ public class SearchPage extends AppCompatActivity
         });
     }
 
+    public void onConnected(Bundle connectionHint) {
+        // Add a marker at current location
+        // and move the map's camera to the same location.
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
+                mGoogleApiClient);
+        mLatitudeText = mLastLocation.getLatitude();
+        mLongitudeText = mLastLocation.getLongitude();
+        Log.v("LatLng Test", String.valueOf(mLatitudeText));
+        Log.v("LatLng Test", String.valueOf(mLongitudeText));
+    }
+
     //Google Map
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        // Add a marker at current location
-        // and move the map's camera to the same location.
-        LatLng currentLocation = new LatLng(-34.397, 150.644);
+        LatLng currentLocation = new LatLng(mLatitudeText, mLongitudeText);
+
         googleMap.addMarker(new MarkerOptions().position(currentLocation)
                 .title("Marker in Current Place"));
         googleMap.moveCamera(CameraUpdateFactory.newLatLng(currentLocation));
@@ -161,5 +193,19 @@ public class SearchPage extends AppCompatActivity
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mGoogleApiClient.connect();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (mGoogleApiClient.isConnected()) {
+            mGoogleApiClient.disconnect();
+        }
     }
 }
