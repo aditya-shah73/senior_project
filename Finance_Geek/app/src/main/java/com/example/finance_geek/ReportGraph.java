@@ -44,19 +44,15 @@ public class ReportGraph extends Fragment {
             pieEntry.add(new PieEntry(totalPriceData.get(i), totalDateData.get(i)));
         }
 
-        PieDataSet dataSet = new PieDataSet(pieEntry, "Prices for food");
+        PieDataSet dataSet = new PieDataSet(pieEntry,"");
         PieData data = new PieData(dataSet);
         chartView.setData(data);
         chartView.invalidate();
         chartView.setDrawEntryLabels(true);
+        chartView.animateY(5000);
+        data.setValueTextSize(12f);
 
         ArrayList<Integer> colors = new ArrayList<>();
-
-        for (int c : ColorTemplate.VORDIPLOM_COLORS)
-            colors.add(c);
-
-        for (int c : ColorTemplate.JOYFUL_COLORS)
-            colors.add(c);
 
         for (int c : ColorTemplate.COLORFUL_COLORS)
             colors.add(c);
@@ -68,7 +64,6 @@ public class ReportGraph extends Fragment {
             colors.add(c);
 
         colors.add(ColorTemplate.getHoloBlue());
-
         dataSet.setColors(colors);
     }
 }
