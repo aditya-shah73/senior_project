@@ -2,6 +2,7 @@ package com.example.finance_geek;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,26 +45,33 @@ public class ReportGraph extends Fragment {
             pieEntry.add(new PieEntry(totalPriceData.get(i), totalDateData.get(i)));
         }
 
-        PieDataSet dataSet = new PieDataSet(pieEntry,"");
-        PieData data = new PieData(dataSet);
-        chartView.setData(data);
-        chartView.invalidate();
-        chartView.setDrawEntryLabels(true);
-        chartView.animateY(5000);
-        data.setValueTextSize(12f);
+        if(!(pieEntry.isEmpty()))
+        {
+            PieDataSet dataSet = new PieDataSet(pieEntry, "");
+            PieData data = new PieData(dataSet);
+            chartView.setData(data);
+            chartView.invalidate();
+            chartView.setDrawEntryLabels(true);
+            chartView.animateY(5000);
+            data.setValueTextSize(12f);
 
-        ArrayList<Integer> colors = new ArrayList<>();
+            ArrayList<Integer> colors = new ArrayList<>();
 
-        for (int c : ColorTemplate.COLORFUL_COLORS)
-            colors.add(c);
+            for (int c : ColorTemplate.COLORFUL_COLORS)
+                colors.add(c);
 
-        for (int c : ColorTemplate.LIBERTY_COLORS)
-            colors.add(c);
+            for (int c : ColorTemplate.LIBERTY_COLORS)
+                colors.add(c);
 
-        for (int c : ColorTemplate.PASTEL_COLORS)
-            colors.add(c);
+            for (int c : ColorTemplate.PASTEL_COLORS)
+                colors.add(c);
 
-        colors.add(ColorTemplate.getHoloBlue());
-        dataSet.setColors(colors);
+            colors.add(ColorTemplate.getHoloBlue());
+            dataSet.setColors(colors);
+        }
+        else
+        {
+            chartView.setNoDataText("No purchases this week!");
+        }
     }
 }
