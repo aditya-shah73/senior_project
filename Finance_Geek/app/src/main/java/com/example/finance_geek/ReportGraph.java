@@ -1,8 +1,8 @@
 package com.example.finance_geek;
 
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -72,6 +72,8 @@ public class ReportGraph extends Fragment {
         else
         {
             chartView.setNoDataText("No purchases this week!");
+            Paint p = chartView.getPaint(PieChart.PAINT_INFO);
+            p.setTextSize(60);
         }
     }
 }
