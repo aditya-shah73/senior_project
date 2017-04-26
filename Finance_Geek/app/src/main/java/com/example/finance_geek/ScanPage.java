@@ -1,5 +1,6 @@
 package com.example.finance_geek;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
@@ -11,6 +12,8 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.content.FileProvider;
+import android.support.v7.app.AlertDialog;
+import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -22,6 +25,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -35,6 +39,8 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.googlecode.tesseract.android.TessBaseAPI;
 import java.io.*;
+import java.text.DateFormat;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.*;
@@ -51,7 +57,44 @@ public class ScanPage extends AppCompatActivity
     String CurrentPhotoPath;
     Bitmap image;
     private TessBaseAPI mTess;
+    private String restaurant = "";
     String datapath = "";
+
+    //date
+    final DateFormat df = new SimpleDateFormat("MMM dd, yyyy");
+    final Date dateobj = new Date();
+
+    public static class Item {
+        String restaurant;
+        String item;
+        double price;
+        String date;
+
+        public Item() {
+            super();
+        }
+
+        public Item(String restaurantName, String itemName, double price, String date) {
+            super();
+            this.restaurant = restaurantName;
+            this.item = itemName;
+            this.price = price;
+            this.date = date;
+        }
+
+        @Override
+        public String toString() {
+            NumberFormat priceFormatter = NumberFormat.getCurrencyInstance();
+
+            return "Restaurant: " + this.restaurant + "\n"
+                    + "Item: " + this.item + "\n"
+                    + "Price: " + priceFormatter.format(price);
+        }
+
+        public boolean equals(String value1, String value2, double value3) {
+            return this.restaurant == value1 && this.item == value2 && this.price == value3;
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,14 +163,39 @@ public class ScanPage extends AppCompatActivity
             filepath.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    Toast.makeText(ScanPage.this, "Sucessful", Toast.LENGTH_LONG).show();
                 }
             });
             imageView.setImageURI(uri);
             try {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
                 image = bitmap;
-                processImage();
+
+                //Pop up text input for restaurant name
+                AlertDialog.Builder alert = new AlertDialog.Builder(this);
+                //alert.setTitle("Title");
+                alert.setMessage("Enter the restaurant name");
+                final EditText input = new EditText(this);
+                input.setInputType(InputType.TYPE_CLASS_TEXT);
+                alert.setView(input);
+
+                // Set up the buttons
+                alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        restaurant = input.getText().toString();
+                        processImage();
+                        Toast.makeText(ScanPage.this, "Successful!", Toast.LENGTH_LONG).show();
+                    }
+                });
+
+                alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+
+                alert.show();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -276,7 +344,7 @@ public class ScanPage extends AppCompatActivity
         Log.v("OCR Message", OCRresult);
         TextView OCRTextView = (TextView) findViewById(R.id.OCRTextView);
         OCRTextView.setText(OCRresult);
-        writeToDB(OCRresult);
+        //writeToDB(OCRresult);
 
         String pattern = "(\\n)(\\d)(.*?)(\\$)((.)*)";
         Pattern r = Pattern.compile(pattern);
@@ -292,6 +360,24 @@ public class ScanPage extends AppCompatActivity
             Log.v("Item Name", String.valueOf(itemName));
             Log.v("Item Price", String.valueOf(itemPrice));
         }
+
+        Iterator<String> itName = itemName.iterator();
+        Iterator<String> itPrice = itemPrice.iterator();
+
+        Double price;
+        String item;
+
+        while (itName.hasNext()){
+            item = itName.next();
+            price = Double.parseDouble(itPrice.next());
+
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
+            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            final DatabaseReference myRef = database.getReference(user.getUid());
+            final DatabaseReference itemListChild = myRef.child("Item List");
+            DatabaseReference itemChild = itemListChild.push();
+            itemChild.setValue(new Item(restaurant, item, price, df.format(dateobj)));
+        }
     }
 
     public void writeToDB(String s)
@@ -302,4 +388,5 @@ public class ScanPage extends AppCompatActivity
         final DatabaseReference itemListChild = myRef.child("Tesseract");
         itemListChild.setValue(s);
     }
+
 }
