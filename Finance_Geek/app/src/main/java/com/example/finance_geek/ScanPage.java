@@ -42,6 +42,10 @@ import java.util.regex.*;
 public class ScanPage extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    public final static int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1034;
+    public final String APP_TAG = "Finance_Geek";
+    public String photoFileName = "photo1.jpg";
+
     private Button selectPictureButton;
     private Button uploadButton;
     private ImageView imageView;
@@ -72,7 +76,7 @@ public class ScanPage extends AppCompatActivity
         myStorage = FirebaseStorage.getInstance().getReference();
 
         selectPictureButton = (Button) findViewById(R.id.select_image);
-        uploadButton = (Button)findViewById(R.id.upload);
+
         imageView = (ImageView)findViewById(R.id.imageView);
 
         //select image from gallery
@@ -85,13 +89,11 @@ public class ScanPage extends AppCompatActivity
             }
         });
 
-        //take picture
+        uploadButton = (Button)findViewById(R.id.upload);
         uploadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view){
-                //Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                dispatchTakePictureIntent();
-                //startActivityForResult(intent, REQUEST_TAKE_PHOTO);
+                onLaunchCamera(view);
             }
         });
 
@@ -111,11 +113,38 @@ public class ScanPage extends AppCompatActivity
         mTess.init(datapath, language);
     }
 
+    public void onLaunchCamera(View view) {
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+        }
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(requestCode == GALLERY_INTENT && resultCode == RESULT_OK) {
-            Uri uri = data.getData();
 
+        if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE)
+        {
+            if (resultCode == RESULT_OK)
+            {
+                Bundle extras = data.getExtras();
+                Bitmap imageBitmap = (Bitmap) extras.get("data");
+                Uri takenPhotoUri = getPhotoFileUri(photoFileName);
+                Bitmap takenImage = BitmapFactory.decodeFile(takenPhotoUri.getPath());
+                imageView = (ImageView) findViewById(R.id.imageView);
+                imageView.setImageBitmap(imageBitmap);
+                saveImageToGallery();
+            }
+            else
+            {
+                Toast.makeText(this, "Picture wasn't taken!", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        else if(requestCode == GALLERY_INTENT && resultCode == RESULT_OK)
+        {
+            Uri uri = data.getData();
             StorageReference filepath = myStorage.child("Photos").child(uri.getLastPathSegment());
             filepath.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
@@ -133,12 +162,33 @@ public class ScanPage extends AppCompatActivity
             }
         }
 
-        if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
+        else if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK)
+        {
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
             imageView.setImageBitmap(imageBitmap);
         }
     }
+
+    public Uri getPhotoFileUri(String fileName) {
+        File mediaStorageDir = new File(
+                getExternalFilesDir(Environment.DIRECTORY_PICTURES), APP_TAG);
+
+        if (!mediaStorageDir.exists() && !mediaStorageDir.mkdirs()) {
+            Log.d(APP_TAG, "failed to create directory");
+        }
+
+        File file = new File(mediaStorageDir.getPath() + File.separator + fileName);
+
+        return FileProvider.getUriForFile(ScanPage.this, "com.example.finance_geek.fileprovider", file);
+    }
+
+    private void saveImageToGallery(){
+        imageView.setDrawingCacheEnabled(true);
+        Bitmap b = imageView.getDrawingCache();
+        MediaStore.Images.Media.insertImage(this.getContentResolver(), b,"test", "test");
+    }
+
 
     @Override
     public void onBackPressed() {
@@ -184,49 +234,6 @@ public class ScanPage extends AppCompatActivity
         return true;
     }
 
-    private void dispatchTakePictureIntent() {
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        Uri photoURI = getLocalBitmapUri(imageView);
-        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-        startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
-    }
-
-    public Uri getLocalBitmapUri(ImageView imageView) {
-        // Extract Bitmap from ImageView drawable
-        Drawable drawable = imageView.getDrawable();
-        Bitmap bmp = null;
-        if (drawable instanceof BitmapDrawable){
-            bmp = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
-        } else {
-            return null;
-        }
-        // Store image to default external storage directory
-        Uri photoURI = null;
-        try {
-            File file =  new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), "share_image_" + System.currentTimeMillis() + ".png");
-            FileOutputStream out = new FileOutputStream(file);
-            bmp.compress(Bitmap.CompressFormat.PNG, 90, out);
-            out.close();
-            // **Warning:** This will fail for API >= 24, use a FileProvider as shown below instead.
-            photoURI = FileProvider.getUriForFile(this,
-                    "com.example.finance_geek.fileprovider",
-                    file);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return photoURI;
-    }
-
-    private File createImageFile() throws IOException {
-        // Create an image file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
-        File image = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), imageFileName + timeStamp);
-        CurrentPhotoPath = image.getAbsolutePath();
-        return image;
-    }
-
-
     private void copyFiles() {
         try {
             //location we want the file to be at
@@ -269,6 +276,7 @@ public class ScanPage extends AppCompatActivity
             }
         }
     }
+
     public void processImage(){
         String OCRresult = null;
         mTess.setImage(image);
