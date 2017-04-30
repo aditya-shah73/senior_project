@@ -28,9 +28,9 @@ public class ReportGraph extends Fragment {
 
     private void setupPieCharts() {
         HomePage activity = new HomePage();
-        HashMap<String, Double> data_price_data = activity.getPriceDateData();
+        HashMap<String, Double> data_price_date = activity.getPriceDateData();
 
-        for(Map.Entry<String, Double> entry : data_price_data.entrySet())
+        for(Map.Entry<String, Double> entry : data_price_date.entrySet())
         {
             double value = entry.getValue();
 

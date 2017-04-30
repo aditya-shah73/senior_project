@@ -64,6 +64,7 @@ public class HomePage extends AppCompatActivity
     //data to send to Report Page
     final static HashMap<String, Double> data_price_date = new HashMap<>();
     String data_date;
+    double data_price_total;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -169,23 +170,32 @@ public class HomePage extends AppCompatActivity
                     sum = sum + doublePrice;
                     String stringPrice = String.valueOf(String.format("%.2f", sum)); //2 decimal places
                     totalPrice.setText("Total: $" + stringPrice);
-
-                    //pass data to report page
-                    if(data_price_date.containsKey(data_date))
-                    {
-                        data_price_date.put(data_date, sum);
-                    }
-                    else
-                    {
-                        data_price_date.put(data_date, sum);
-                    }
                 }
-                for(Map.Entry<String, Double> entry : data_price_date.entrySet())
+
+                Log.v("Item: ", value.toString());
+                Log.v("Date: ", value.date);
+
+                //pass data to report page
+                if(data_price_date.containsKey(value.date))
                 {
-                    Log.v("Key", entry.getKey());
-                    Log.v("Value", entry.getValue().toString());
+                    if(sum != 0) {
+                        Log.v("in map: ", "existing key");
+                        //data_price_total = data_price_date.get(value.date) + value.price;
+                        //Log.v("oldPrice: ", data_price_date.get(value.date).toString());
+                        data_price_date.put(value.date, sum);
+                        Log.v("SUM: ", Double.toString(data_price_total));
+                    }
+                }
+                else
+                {
+                    data_price_date.put(value.date, value.price);
+                    data_price_total = 0;
+                    Log.v("in map: ", "new key");
                 }
 
+                for (Map.Entry<String, Double> entry : data_price_date.entrySet()) {
+                    Log.v("Map: ", entry.getKey() + ", " + entry.getValue());
+                }
             }
 
             // This function is called each time a child item is removed.
