@@ -1,6 +1,8 @@
 package com.example.finance_geek;
 
 import android.app.Activity;
+import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -66,6 +68,11 @@ public class HomePage extends AppCompatActivity
     String data_date;
     double data_price_total;
 
+    //datepicker
+    FloatingActionButton datepicker;
+    int year_x, month_x, day_x;
+    static final int DIALOG_ID = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -101,6 +108,13 @@ public class HomePage extends AppCompatActivity
                 }
             }
         });
+
+        //datepicker
+        final Calendar calendar = Calendar.getInstance();
+        year_x = calendar.get(Calendar.YEAR);
+        month_x = calendar.get(Calendar.MONTH);
+        day_x = calendar.get(Calendar.DAY_OF_MONTH);
+        showDialogOnButtonClick();
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -373,4 +387,34 @@ public class HomePage extends AppCompatActivity
     public static HashMap getPriceDateData() {
         return data_price_date;
     }
+
+    public void showDialogOnButtonClick() {
+        datepicker = (FloatingActionButton) findViewById(R.id.datepicker);
+
+        datepicker.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View view) {
+                showDialog(DIALOG_ID);
+            }
+        });
+    }
+
+    @Override
+    protected Dialog onCreateDialog(int id) {
+        if(id == DIALOG_ID) {
+            return new DatePickerDialog(this, dpickerListner, year_x, month_x, day_x);
+        }
+        return null;
+    }
+
+    private DatePickerDialog.OnDateSetListener dpickerListner = new DatePickerDialog.OnDateSetListener() {
+       @Override
+       public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfYear) {
+           year_x = year;
+           month_x = monthOfYear;
+           day_x = dayOfYear;
+           String[] MONTHS = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+           TextView date = (TextView) findViewById(R.id.date);
+           date.setText(MONTHS[month_x] + " " + day_x + ", " + year_x);
+       }
+    };
 }

@@ -33,4 +33,13 @@
         android:tint="@android:color/white"
         app:srcCompat="@android:drawable/ic_input_add"
         app:backgroundTint="@color/green" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/datepicker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|left"
+        android:layout_margin="@dimen/fab_margin"
+        app:srcCompat="@android:drawable/ic_menu_my_calendar"
+        app:backgroundTint="@color/green" />
 </android.support.design.widget.CoordinatorLayout>
