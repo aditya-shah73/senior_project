@@ -33,7 +33,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     SignInButton signInButton;
     Button signOutButton;
     TextView statusTextView;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,11 +44,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 if(user != null)
                 {
-                    Log.d("Auth", "user logged in" + user.getEmail());
+                    Log.v("Auth", "User logged in: " + user.getEmail());
                 }
                 else
                 {
-                    Log.d("Auth", "user logged out");
+                    Log.v("Auth", "User logged out!!");
                 }
             }
         };
