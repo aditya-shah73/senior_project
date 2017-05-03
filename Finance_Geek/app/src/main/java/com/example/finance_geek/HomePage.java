@@ -7,6 +7,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -109,13 +111,6 @@ public class HomePage extends AppCompatActivity
             }
         });
 
-        //datepicker
-        final Calendar calendar = Calendar.getInstance();
-        year_x = calendar.get(Calendar.YEAR);
-        month_x = calendar.get(Calendar.MONTH);
-        day_x = calendar.get(Calendar.DAY_OF_MONTH);
-        showDialogOnButtonClick();
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -125,10 +120,17 @@ public class HomePage extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        //date
+        //datepicker
+        final Calendar calendar = Calendar.getInstance();
+        year_x = calendar.get(Calendar.YEAR);
+        month_x = calendar.get(Calendar.MONTH);
+        day_x = calendar.get(Calendar.DAY_OF_MONTH);
+        showDialogOnButtonClick();
+
+        //date today
         final DateFormat df = new SimpleDateFormat("MMM dd, yyyy");
         final Date dateobj = new Date();
-        TextView date = (TextView) findViewById(R.id.date);
+        final TextView date = (TextView) findViewById(R.id.date);
         date.setText(df.format(dateobj));
 
         // Add items via the Button and EditText at the bottom of the window.
@@ -157,6 +159,49 @@ public class HomePage extends AppCompatActivity
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         final DatabaseReference myRef = database.getReference(user.getUid());
         final DatabaseReference itemListChild = myRef.child("Item List");
+
+        //update listview based on datepiker
+        date.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                //Item test = new Item("test", "test", 5.00, "May 02, 2017");
+                //adapter.add(test);
+                adapter.clear();
+                itemListChild.orderByChild("date").addChildEventListener(new ChildEventListener() {
+                    @Override
+                    public void onChildAdded(DataSnapshot dataSnapshot, String prevChildKey) {
+                        Item value = dataSnapshot.getValue(Item.class);
+                        Log.v("DATE: ", value.date);
+                        Log.v("DATE AT TOP: ", date.getText().toString());
+                        if(value.date.equals(date.getText().toString())) {
+                            adapter.add(value);
+                        }
+                    }
+
+                    @Override
+                    public void onChildChanged(DataSnapshot dataSnapshot, String prevChildKey) {}
+
+                    @Override
+                    public void onChildRemoved(DataSnapshot dataSnapshot) {}
+
+                    @Override
+                    public void onChildMoved(DataSnapshot dataSnapshot, String prevChildKey) {}
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {}
+                });
+            }
+        });
 
         // Assign a listener to detect changes to the child items
         // of the database reference.
@@ -289,7 +334,7 @@ public class HomePage extends AppCompatActivity
                 double priceValue = item.price;
 
                 Query myQuery = itemListChild.orderByChild("item").equalTo(restaurantValue);
-
+                Log.v("QUERY", myQuery.toString());
                 Log.v("Restaurant", restaurantValue);
                 Log.v("Item", itemValue);
                 Log.v("Price", Double.toString(priceValue));
@@ -413,8 +458,11 @@ public class HomePage extends AppCompatActivity
            month_x = monthOfYear;
            day_x = dayOfYear;
            String[] MONTHS = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+
+           DecimalFormat nf2 = new DecimalFormat("#00");
+
            TextView date = (TextView) findViewById(R.id.date);
-           date.setText(MONTHS[month_x] + " " + day_x + ", " + year_x);
+           date.setText(MONTHS[month_x] + " " + nf2.format(day_x) + ", " + year_x);
        }
     };
 }
