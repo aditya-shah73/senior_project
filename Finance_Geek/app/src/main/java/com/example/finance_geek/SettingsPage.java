@@ -2,9 +2,6 @@ package com.example.finance_geek;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -15,11 +12,17 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.TextView;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class SettingsPage extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
 
     Button signOutButton;
+    private String email = "";
+    private String name = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +42,17 @@ public class SettingsPage extends AppCompatActivity
 
         signOutButton = (Button) findViewById(R.id.log_out_button);
         signOutButton.setOnClickListener(this);
+
+        final TextView user_email = (TextView) findViewById(R.id.textView2);
+        final TextView user_name = (TextView) findViewById(R.id.textView1);
+
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            name = user.getDisplayName();
+            email = user.getEmail();
+            user_email.setText("Email: " + email);
+            user_name.setText("User Name: " + name);
+        }
     }
 
     @Override

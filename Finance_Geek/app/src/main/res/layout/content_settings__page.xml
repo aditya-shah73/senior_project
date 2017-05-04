@@ -17,22 +17,37 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_centerHorizontal="true"
-        android:layout_alignParentTop="true">
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
 
-
-        <Switch
-            android:text="Push Notification"
+        <TextView
+            android:id="@+id/textView1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/switch1"
-            android:defaultValue="false"/>
+            android:lineSpacingExtra="8sp"
+            android:text="User Name"
+            android:textColor="@color/common_google_signin_btn_text_dark_focused"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:lineSpacingExtra="8sp"
+            android:text="Email"
+            android:textColor="@color/common_google_signin_btn_text_dark_focused"
+            android:textSize="20sp" />
 
         <Button
-            android:text="Sign Out"
-            android:layout_gravity="center"
+            android:id="@+id/log_out_button"
             android:layout_width="118dp"
             android:layout_height="wrap_content"
-            android:id="@+id/log_out_button" />
+            android:layout_gravity="center"
+            android:layout_marginTop="80dp"
+            android:text="Sign Out" />
+
+
     </LinearLayout>
 </RelativeLayout>
