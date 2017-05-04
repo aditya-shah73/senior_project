@@ -213,10 +213,12 @@ public class HomePage extends AppCompatActivity
             // This function is called each time a child item is removed.
             public void onChildRemoved(DataSnapshot dataSnapshot){
                 Log.v("onChildRemoved", "method entered");
-                String key = dataSnapshot.getKey();
+
                 Item value = dataSnapshot.getValue(Item.class);
-                //itemListChild.child(item.getKey()).removeValue();
-                adapter.remove(value);
+                Log.v("value", value.toString());
+
+
+
             }
 
             // The following functions are also required in ChildEventListener implementations.
@@ -289,28 +291,14 @@ public class HomePage extends AppCompatActivity
                 String itemValue = item.item;
                 double priceValue = item.price;
 
-//                Query myQuery = itemListChild.orderByChild("item").equalTo(restaurantValue);
-
                 Log.v("Restaurant", restaurantValue);
                 Log.v("Item", itemValue);
                 Log.v("Price", Double.toString(priceValue));
 
                 itemListChild.child(item.getKey()).removeValue();
+                adapter.remove(adapter.getItem(position));
+                adapter.notifyDataSetChanged();
 
-//                myQuery.addListenerForSingleValueEvent(new ValueEventListener() {
-//                    @Override
-//                    public void onDataChange(DataSnapshot dataSnapshot) {
-//                        if (dataSnapshot.hasChildren()) {
-//                            DataSnapshot firstChild = dataSnapshot.getChildren().iterator().next();
-//                            firstChild.getRef().removeValue();
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onCancelled(DatabaseError databaseError) {
-//                    }
-//                })
-//                ;
             }
 
         });
