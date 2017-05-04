@@ -185,7 +185,6 @@ public class HomePage extends AppCompatActivity
                         Log.v("DATE AT TOP: ", date.getText().toString());
                         if(value.date.equals(date.getText().toString())) {
                             adapter.add(value);
-                            Log.v("test", "test");
                         }
                     }
 
