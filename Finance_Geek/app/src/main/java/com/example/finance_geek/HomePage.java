@@ -31,17 +31,19 @@ public class HomePage extends AppCompatActivity
         String item;
         double price;
         String date;
+        String refKey;
 
         public Item() {
             super();
         }
 
-        public Item(String restaurantName, String itemName, double price, String date) {
+        public Item(String restaurantName, String itemName, double price, String date, String refKey) {
             super();
             this.restaurant = restaurantName;
             this.item = itemName;
             this.price = price;
             this.date = date;
+            this.refKey = refKey;
         }
 
         @Override
@@ -51,6 +53,15 @@ public class HomePage extends AppCompatActivity
             return "Restaurant: " + this.restaurant + "\n"
                     + "Item: " + this.item + "\n"
                     + "Price: " + priceFormatter.format(price);
+        }
+
+        public void setKey(String s){
+            this.refKey = s;
+
+        }
+
+        public String getKey(){
+            return this.refKey;
         }
 
         public boolean equals(String value1, String value2, double value3) {
@@ -196,11 +207,15 @@ public class HomePage extends AppCompatActivity
                 for (Map.Entry<String, Double> entry : data_price_date.entrySet()) {
                     Log.v("Map: ", entry.getKey() + ", " + entry.getValue());
                 }
+                value.setKey(dataSnapshot.getKey());
             }
 
             // This function is called each time a child item is removed.
             public void onChildRemoved(DataSnapshot dataSnapshot){
+                Log.v("onChildRemoved", "method entered");
+                String key = dataSnapshot.getKey();
                 Item value = dataSnapshot.getValue(Item.class);
+                //itemListChild.child(item.getKey()).removeValue();
                 adapter.remove(value);
             }
 
@@ -249,7 +264,7 @@ public class HomePage extends AppCompatActivity
 
                 DatabaseReference itemChild = itemListChild.push();
                 Log.d("itemChild", itemChild.getKey());
-                itemChild.setValue(new Item(restaurant, item, price, df.format(dateobj)));
+                itemChild.setValue(new Item(restaurant, item, price, df.format(dateobj), itemChild.getKey()));
 
                 //UI changes
                 restaurantText.setVisibility(View.GONE);
@@ -274,26 +289,28 @@ public class HomePage extends AppCompatActivity
                 String itemValue = item.item;
                 double priceValue = item.price;
 
-                Query myQuery = itemListChild.orderByChild("item").equalTo(restaurantValue);
+//                Query myQuery = itemListChild.orderByChild("item").equalTo(restaurantValue);
 
                 Log.v("Restaurant", restaurantValue);
                 Log.v("Item", itemValue);
                 Log.v("Price", Double.toString(priceValue));
 
-                myQuery.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        if (dataSnapshot.hasChildren()) {
-                            DataSnapshot firstChild = dataSnapshot.getChildren().iterator().next();
-                            firstChild.getRef().removeValue();
-                        }
-                    }
+                itemListChild.child(item.getKey()).removeValue();
 
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                    }
-                })
-                ;
+//                myQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+//                    @Override
+//                    public void onDataChange(DataSnapshot dataSnapshot) {
+//                        if (dataSnapshot.hasChildren()) {
+//                            DataSnapshot firstChild = dataSnapshot.getChildren().iterator().next();
+//                            firstChild.getRef().removeValue();
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onCancelled(DatabaseError databaseError) {
+//                    }
+//                })
+//                ;
             }
 
         });
