@@ -68,12 +68,12 @@ public class HomePage extends AppCompatActivity
     //data to send to Report Page
     final static HashMap<String, Double> data_price_date = new HashMap<>();
     String data_date;
-    double data_price_total;
 
     //datepicker
     FloatingActionButton datepicker;
     int year_x, month_x, day_x;
     static final int DIALOG_ID = 0;
+    double totalPriceDB;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -183,13 +183,14 @@ public class HomePage extends AppCompatActivity
 
 
                 //update listview
+                /*
                 itemListChild.orderByChild("date").addChildEventListener(new ChildEventListener() {
                     @Override
                     public void onChildAdded(DataSnapshot dataSnapshot, String prevChildKey) {
                         Item value = dataSnapshot.getValue(Item.class);
 
                         if(value.date.equals(date.getText().toString())) {
-                            adapter.add(value);
+                            //adapter.add(value);
                         }
                     }
 
@@ -204,6 +205,21 @@ public class HomePage extends AppCompatActivity
 
                     @Override
                     public void onCancelled(DatabaseError databaseError) {}
+                });*/
+
+                Query itemByDate = itemListChild.orderByChild("date").equalTo(date.getText().toString());
+                itemByDate.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        for(DataSnapshot singleSnapshot : dataSnapshot.getChildren()){
+                            Item value = singleSnapshot.getValue(Item.class);
+                            adapter.add(value);
+                        }
+                    }
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
                 });
 
                 //sum
@@ -211,7 +227,6 @@ public class HomePage extends AppCompatActivity
                     totalPrice.setText("Total: $0.00");
                     sum = 0.0;
                     Log.v("IN EMPTY", "IN EMPTY");
-                    //totalPriceChild.child(date.getText().toString()).setValue(sum);
                 }
 
                 //get total price
@@ -225,7 +240,6 @@ public class HomePage extends AppCompatActivity
                             sum = price;
                             String stringPrice = String.valueOf(String.format("%.2f", sum)); //2 decimal places
                             totalPrice.setText("Total: $" + stringPrice);
-
                         }
                     }
                     @Override
@@ -245,8 +259,8 @@ public class HomePage extends AppCompatActivity
             // each time a new child is added.
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String previousChildName) {
-                Item value = dataSnapshot.getValue(Item.class);
-                if(value.date.equals(df.format(dateobj))) {
+                final Item value = dataSnapshot.getValue(Item.class);
+                if(value.date.equals(date.getText().toString())) {
                     adapter.add(value);
 
                     data_date = value.date;
@@ -276,16 +290,32 @@ public class HomePage extends AppCompatActivity
                 {
                     if(sum != 0) {
                         Log.v("in map: ", "existing key");
-                        //data_price_total = data_price_date.get(value.date) + value.price;
-                        //Log.v("oldPrice: ", data_price_date.get(value.date).toString());
-                        data_price_date.put(value.date, sum);
-                        Log.v("SUM: ", Double.toString(data_price_total));
+
+                        //get total price
+                        Query totalPriceQuery = totalPriceChild.orderByKey().equalTo(date.getText().toString());
+                        totalPriceQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                for(DataSnapshot singleSnapshot : dataSnapshot.getChildren()){
+                                    totalPriceDB = singleSnapshot.getValue(double.class);
+                                }
+                                DecimalFormat twoDecimals = new DecimalFormat("#.##");
+
+                                data_price_date.put(value.date, Double.valueOf(twoDecimals.format(totalPriceDB)));
+                                Log.v("DATE: ", value.date);
+                                Log.v("PRICE ", Double.toString(totalPriceDB));
+
+                            }
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
                     }
                 }
                 else
                 {
                     data_price_date.put(value.date, value.price);
-                    data_price_total = 0;
                     Log.v("in map: ", "new key");
                 }
 
