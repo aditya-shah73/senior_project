@@ -210,7 +210,6 @@ public class ScanPage extends AppCompatActivity
                     public void onClick(DialogInterface dialog, int which) {
                         restaurant = input.getText().toString();
                         processImage();
-                        Toast.makeText(ScanPage.this, "Successful!", Toast.LENGTH_LONG).show();
                     }
                 });
 
@@ -349,8 +348,9 @@ public class ScanPage extends AppCompatActivity
         Log.v("OCR Message", OCRresult);
         //writeToDB(OCRresult);
 
-        String pattern = "(\\n)(\\d)(.*?)(\\$)((.)*)";
-        Pattern r = Pattern.compile(pattern);
+        String pattern1 = "(\\n)(\\d)(.*?)(\\$)((.)*)";
+        String pattern2 = "(\\n)(\\d)(.*?)((.)*)";
+        Pattern r = Pattern.compile(pattern1);
         Matcher m = r.matcher(OCRresult);
 
         ArrayList itemName = new ArrayList();
@@ -366,29 +366,33 @@ public class ScanPage extends AppCompatActivity
         Iterator<String> itName = itemName.iterator();
         Iterator<String> itPrice = itemPrice.iterator();
 
-        Double price;
+        double price;
         String item;
-
+        boolean successMessage = false;
         while (itName.hasNext()){
             item = itName.next();
-            price = Double.parseDouble(itPrice.next());
-
-            FirebaseDatabase database = FirebaseDatabase.getInstance();
-            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-            final DatabaseReference myRef = database.getReference(user.getUid());
-            final DatabaseReference itemListChild = myRef.child("Item List");
-            DatabaseReference itemChild = itemListChild.push();
-            itemChild.setValue(new Item(restaurant, item, price, df.format(dateobj)));
+            try {
+                price = Double.parseDouble(itPrice.next());
+                writeToDB(restaurant, item, price);
+                successMessage = true;
+            }
+            catch (Exception e) {
+                Toast.makeText(this, "Problem reading receipt! Try another.", Toast.LENGTH_SHORT).show();
+            }
+        }
+        if (successMessage) {
+            Toast.makeText(ScanPage.this, "Successfully added items from receipt!", Toast.LENGTH_LONG).show();
         }
     }
 
-    public void writeToDB(String s)
+    public void writeToDB(String r, String i, double p)
     {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         final DatabaseReference myRef = database.getReference(user.getUid());
-        final DatabaseReference itemListChild = myRef.child("Tesseract");
-        itemListChild.setValue(s);
+        final DatabaseReference itemListChild = myRef.child("Item List");
+        DatabaseReference itemChild = itemListChild.push();
+        itemChild.setValue(new Item(r, i, p, df.format(dateobj)));
     }
 
 }
