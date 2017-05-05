@@ -35,17 +35,19 @@ public class HomePage extends AppCompatActivity
         String item;
         double price;
         String date;
+        String refKey;
 
         public Item() {
             super();
         }
 
-        public Item(String restaurantName, String itemName, double price, String date) {
+        public Item(String restaurantName, String itemName, double price, String date, String refKey) {
             super();
             this.restaurant = restaurantName;
             this.item = itemName;
             this.price = price;
             this.date = date;
+            this.refKey = refKey;
         }
 
         @Override
@@ -55,6 +57,15 @@ public class HomePage extends AppCompatActivity
             return "Restaurant: " + this.restaurant + "\n"
                     + "Item: " + this.item + "\n"
                     + "Price: " + priceFormatter.format(price);
+        }
+
+        public void setKey(String s){
+            this.refKey = s;
+
+        }
+
+        public String getKey(){
+            return this.refKey;
         }
 
         public boolean equals(String value1, String value2, double value3) {
@@ -308,50 +319,19 @@ public class HomePage extends AppCompatActivity
 
                 Log.v("Item: ", value.toString());
                 Log.v("Date: ", value.date);
-/*
-                //pass data to report page
-                if(data_price_date.containsKey(value.date))
-                {
-                    if(sum != 0) {
-                        Log.v("in map: ", "existing key");
-
-                        //get total price
-                        Query totalPriceQuery = totalPriceChild.orderByKey().equalTo(date.getText().toString());
-                        totalPriceQuery.addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                for(DataSnapshot singleSnapshot : dataSnapshot.getChildren()){
-                                    totalPriceDB = singleSnapshot.getValue(double.class);
-                                }
-                                DecimalFormat twoDecimals = new DecimalFormat("#.##");
-
-                                data_price_date.put(value.date, Double.valueOf(twoDecimals.format(totalPriceDB)));
-                                Log.v("DATE: ", value.date);
-                                Log.v("PRICE ", Double.toString(totalPriceDB));
-
-                            }
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
-
-                            }
-                        });
-                    }
-                }
-                else
-                {
-                    data_price_date.put(value.date, value.price);
-                    Log.v("in map: ", "new key");
+                value.setKey(dataSnapshot.getKey());
                 }
 
-                for (Map.Entry<String, Double> entry : data_price_date.entrySet()) {
-                    Log.v("Map: ", entry.getKey() + ", " + entry.getValue());
-                }*/
-            }
 
             // This function is called each time a child item is removed.
             public void onChildRemoved(DataSnapshot dataSnapshot){
+                Log.v("onChildRemoved", "method entered");
+
                 Item value = dataSnapshot.getValue(Item.class);
-                adapter.remove(value);
+                Log.v("value", value.toString());
+
+
+
             }
 
             // The following functions are also required in ChildEventListener implementations.
@@ -399,7 +379,8 @@ public class HomePage extends AppCompatActivity
 
                 DatabaseReference itemChild = itemListChild.push();
                 Log.d("itemChild", itemChild.getKey());
-                itemChild.setValue(new Item(restaurant, item, price, date.getText().toString()));
+
+                itemChild.setValue(new Item(restaurant, item, price, date.getText().toString(), itemChild.getKey()));
 
                 //UI changes
                 restaurantText.setVisibility(View.GONE);
@@ -430,20 +411,10 @@ public class HomePage extends AppCompatActivity
                 Log.v("Item", itemValue);
                 Log.v("Price", Double.toString(priceValue));
 
-                myQuery.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        if (dataSnapshot.hasChildren()) {
-                            DataSnapshot firstChild = dataSnapshot.getChildren().iterator().next();
-                            firstChild.getRef().removeValue();
-                        }
-                    }
+                itemListChild.child(item.getKey()).removeValue();
+                adapter.remove(adapter.getItem(position));
+                adapter.notifyDataSetChanged();
 
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                    }
-                })
-                ;
             }
 
         });

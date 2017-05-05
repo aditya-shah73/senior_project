@@ -3,35 +3,35 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="50dp"
-    android:paddingLeft="140dp"
-    android:paddingRight="100dp"
-    android:paddingTop="245dp"
+    android:paddingLeft="130dp"
+    android:paddingTop="240dp"
     tools:context="com.example.finance_geek.MainActivity"
     tools:showIn="@layout/activity_main">
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
         android:orientation="vertical"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true">
-
-        <com.google.android.gms.common.SignInButton
-            android:id="@+id/sign_in_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+        android:layout_alignParentTop="true">
 
         <Button
-            android:layout_width="110dp"
-            android:layout_height="wrap_content"
-            android:text="Sign Out"
-            android:id="@+id/signOutButton"/>
+            android:id="@+id/sign_in_button"
+            android:layout_width="140dp"
+            android:layout_height="45dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/buttonshape"
+            android:text="Sign in"
+            android:textColor="#FFFFFF"
+            android:textSize="15sp" />
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            />
+        <Button
+            android:id="@+id/signOutButton"
+            android:layout_width="140dp"
+            android:layout_height="45dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/buttonshape"
+            android:text="Sign Out"
+            android:textColor="#FFFFFF"
+            android:textSize="15sp" />
     </LinearLayout>
 </RelativeLayout>

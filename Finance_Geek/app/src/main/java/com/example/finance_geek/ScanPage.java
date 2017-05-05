@@ -5,12 +5,11 @@ import android.content.Intent;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.text.InputType;
@@ -24,10 +23,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -52,8 +49,8 @@ public class ScanPage extends AppCompatActivity
     public final String APP_TAG = "Finance_Geek";
     public String photoFileName = "photo1.jpg";
 
-    private Button selectPictureButton;
-    private Button uploadButton;
+    private FloatingActionButton selectPictureButton;
+    private FloatingActionButton uploadButton;
     private ImageView imageView;
     private StorageReference myStorage;
     private static final int GALLERY_INTENT = 2;
@@ -118,7 +115,7 @@ public class ScanPage extends AppCompatActivity
 
         myStorage = FirebaseStorage.getInstance().getReference();
 
-        selectPictureButton = (Button) findViewById(R.id.select_image);
+        selectPictureButton = (FloatingActionButton) findViewById(R.id.select_image);
 
         imageView = (ImageView)findViewById(R.id.imageView);
 
@@ -132,7 +129,7 @@ public class ScanPage extends AppCompatActivity
             }
         });
 
-        uploadButton = (Button)findViewById(R.id.upload);
+        uploadButton = (FloatingActionButton)findViewById(R.id.upload);
         uploadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view){
@@ -350,8 +347,6 @@ public class ScanPage extends AppCompatActivity
         mTess.setImage(image);
         OCRresult = mTess.getUTF8Text();
         Log.v("OCR Message", OCRresult);
-        TextView OCRTextView = (TextView) findViewById(R.id.OCRTextView);
-        OCRTextView.setText(OCRresult);
         //writeToDB(OCRresult);
 
         String pattern = "(\\n)(\\d)(.*?)(\\$)((.)*)";
@@ -362,7 +357,6 @@ public class ScanPage extends AppCompatActivity
         ArrayList itemPrice = new ArrayList();
 
         while(m.find()) {
-            OCRTextView.setText(m.group(5));
             itemName.add(m.group(3));
             itemPrice.add(m.group(5));
             Log.v("Item Name", String.valueOf(itemName));

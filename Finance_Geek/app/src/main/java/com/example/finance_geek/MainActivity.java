@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     private FirebaseAuth.AuthStateListener mAuthListener;
     private static final int RC_SIGN_IN = 0;
     private static String TAG = "MAIN_ACTIVITY";
-    SignInButton signInButton;
+    Button signInButton;
     Button signOutButton;
     TextView statusTextView;
     @Override
@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         findViewById(R.id.sign_in_button).setOnClickListener(this);
         findViewById(R.id.signOutButton).setOnClickListener(this);
 
-        signInButton = (SignInButton) findViewById(R.id.sign_in_button);
+        signInButton = (Button) findViewById(R.id.sign_in_button);
         signInButton.setOnClickListener(this);
         statusTextView = (TextView) findViewById(R.id.textView);
 
