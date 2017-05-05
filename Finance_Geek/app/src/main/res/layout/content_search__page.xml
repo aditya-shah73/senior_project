@@ -13,19 +13,6 @@
     tools:context="com.example.finance_geek.SearchPage"
     tools:showIn="@layout/app_bar_search__page">
 
-    <CheckBox
-        android:id="@+id/proximityCheckBox"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="37dp"
-        android:layout_marginStart="37dp"
-        android:layout_marginTop="40dp"
-        android:buttonTint="#51b46d"
-        android:text="Proximity"
-        android:layout_below="@+id/editText3"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-
     <fragment
         android:id="@+id/place_autocomplete_fragment"
         android:layout_width="match_parent"
@@ -33,28 +20,20 @@
         android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
         />
 
-    <CheckBox
-        android:text="Rating"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginRight="53dp"
-        android:layout_marginEnd="53dp"
-        android:id="@+id/ratingCheckBox"
-        android:layout_alignBaseline="@+id/proximityCheckBox"
-        android:layout_alignBottom="@+id/proximityCheckBox"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:buttonTint="#51b46d" />
-
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/proximityCheckBox"
+        android:layout_below="@+id/place_autocomplete_fragment"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
 
         android:id="@+id/googlePlaceView">
 
+        <Button
+            android:id="@+id/btnRestaurant"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Nearby Restaurants" />
 
         <fragment xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:tools="http://schemas.android.com/tools"
