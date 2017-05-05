@@ -74,6 +74,7 @@ public class HomePage extends AppCompatActivity
     int year_x, month_x, day_x;
     static final int DIALOG_ID = 0;
     double totalPriceDB;
+    String totalPriceDateDB;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -161,6 +162,54 @@ public class HomePage extends AppCompatActivity
         final DatabaseReference itemListChild = myRef.child("Item List");
         final DatabaseReference totalPriceChild = myRef.child("Total Price");
 
+        //pass data to report page
+
+        Log.v("in map: ", "existing key");
+
+        //get total price
+        Query totalPriceQuery = totalPriceChild.orderByKey();
+        totalPriceQuery.addChildEventListener(new ChildEventListener() {
+
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String prevChildKey) {
+                totalPriceDB = dataSnapshot.getValue(double.class);
+                totalPriceDateDB = dataSnapshot.getKey();
+
+                DecimalFormat twoDecimals = new DecimalFormat("#.##");
+
+                data_price_date.put(totalPriceDateDB, Double.valueOf(twoDecimals.format(totalPriceDB)));
+                Log.v("DATE: ", totalPriceDateDB);
+                Log.v("PRICE ", Double.toString(totalPriceDB));
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String prevChildKey) {
+                totalPriceDB = dataSnapshot.getValue(double.class);
+                totalPriceDateDB = dataSnapshot.getKey();
+
+                DecimalFormat twoDecimals = new DecimalFormat("#.##");
+
+                data_price_date.put(totalPriceDateDB, Double.valueOf(twoDecimals.format(totalPriceDB)));
+                Log.v("DATE: ", totalPriceDateDB);
+                Log.v("PRICE ", Double.toString(totalPriceDB));
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {}
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String prevChildKey) {}
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {}
+        });
+
+
+
+        for (Map.Entry<String, Double> entry : data_price_date.entrySet()) {
+            Log.v("Map: ", entry.getKey() + ", " + entry.getValue());
+        }
+
         //update listview based on datepicker
         date.addTextChangedListener(new TextWatcher() {
             @Override
@@ -181,32 +230,7 @@ public class HomePage extends AppCompatActivity
                 String stringPrice = String.valueOf(String.format("%.2f", sum)); //2 decimal places
                 totalPrice.setText("Total: $" + stringPrice);
 
-
                 //update listview
-                /*
-                itemListChild.orderByChild("date").addChildEventListener(new ChildEventListener() {
-                    @Override
-                    public void onChildAdded(DataSnapshot dataSnapshot, String prevChildKey) {
-                        Item value = dataSnapshot.getValue(Item.class);
-
-                        if(value.date.equals(date.getText().toString())) {
-                            //adapter.add(value);
-                        }
-                    }
-
-                    @Override
-                    public void onChildChanged(DataSnapshot dataSnapshot, String prevChildKey) {}
-
-                    @Override
-                    public void onChildRemoved(DataSnapshot dataSnapshot) {}
-
-                    @Override
-                    public void onChildMoved(DataSnapshot dataSnapshot, String prevChildKey) {}
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {}
-                });*/
-
                 Query itemByDate = itemListChild.orderByChild("date").equalTo(date.getText().toString());
                 itemByDate.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -284,7 +308,7 @@ public class HomePage extends AppCompatActivity
 
                 Log.v("Item: ", value.toString());
                 Log.v("Date: ", value.date);
-
+/*
                 //pass data to report page
                 if(data_price_date.containsKey(value.date))
                 {
@@ -321,7 +345,7 @@ public class HomePage extends AppCompatActivity
 
                 for (Map.Entry<String, Double> entry : data_price_date.entrySet()) {
                     Log.v("Map: ", entry.getKey() + ", " + entry.getValue());
-                }
+                }*/
             }
 
             // This function is called each time a child item is removed.
