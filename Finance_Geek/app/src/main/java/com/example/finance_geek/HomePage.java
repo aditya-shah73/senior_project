@@ -159,8 +159,9 @@ public class HomePage extends AppCompatActivity
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         final DatabaseReference myRef = database.getReference(user.getUid());
         final DatabaseReference itemListChild = myRef.child("Item List");
+        final DatabaseReference totalPriceChild = myRef.child("Total Price");
 
-        //update listview based on datepiker
+        //update listview based on datepicker
         date.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -174,15 +175,19 @@ public class HomePage extends AppCompatActivity
 
             @Override
             public void afterTextChanged(Editable editable) {
-                //Item test = new Item("test", "test", 5.00, "May 02, 2017");
-                //adapter.add(test);
+                //clear listview
                 adapter.clear();
+
+                String stringPrice = String.valueOf(String.format("%.2f", sum)); //2 decimal places
+                totalPrice.setText("Total: $" + stringPrice);
+
+
+                //update listview
                 itemListChild.orderByChild("date").addChildEventListener(new ChildEventListener() {
                     @Override
                     public void onChildAdded(DataSnapshot dataSnapshot, String prevChildKey) {
                         Item value = dataSnapshot.getValue(Item.class);
-                        Log.v("DATE: ", value.date);
-                        Log.v("DATE AT TOP: ", date.getText().toString());
+
                         if(value.date.equals(date.getText().toString())) {
                             adapter.add(value);
                         }
@@ -199,6 +204,34 @@ public class HomePage extends AppCompatActivity
 
                     @Override
                     public void onCancelled(DatabaseError databaseError) {}
+                });
+
+                //sum
+                if(adapter.isEmpty()) {
+                    totalPrice.setText("Total: $0.00");
+                    sum = 0.0;
+                    Log.v("IN EMPTY", "IN EMPTY");
+                    //totalPriceChild.child(date.getText().toString()).setValue(sum);
+                }
+
+                //get total price
+                Query totalPriceQuery = totalPriceChild.orderByKey().equalTo(date.getText().toString());
+                totalPriceQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        for(DataSnapshot singleSnapshot : dataSnapshot.getChildren()){
+                            Double price = singleSnapshot.getValue(Double.class);
+                            Log.v("PRICE FROM DB: ", price.toString());
+                            sum = price;
+                            String stringPrice = String.valueOf(String.format("%.2f", sum)); //2 decimal places
+                            totalPrice.setText("Total: $" + stringPrice);
+
+                        }
+                    }
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
                 });
             }
         });
@@ -225,10 +258,14 @@ public class HomePage extends AppCompatActivity
                 }
                 else {
                     //get total price
-                    Double doublePrice = value.price;
-                    sum = sum + doublePrice;
-                    String stringPrice = String.valueOf(String.format("%.2f", sum)); //2 decimal places
-                    totalPrice.setText("Total: $" + stringPrice);
+                    if(value.date.equals(date.getText().toString())) {
+                        Double doublePrice = value.price;
+                        sum = sum + doublePrice;
+                        String stringPrice = String.valueOf(String.format("%.2f", sum)); //2 decimal places
+                        totalPrice.setText("Total: $" + stringPrice);
+
+                        totalPriceChild.child(date.getText().toString()).setValue(sum);
+                    }
                 }
 
                 Log.v("Item: ", value.toString());
@@ -308,7 +345,7 @@ public class HomePage extends AppCompatActivity
 
                 DatabaseReference itemChild = itemListChild.push();
                 Log.d("itemChild", itemChild.getKey());
-                itemChild.setValue(new Item(restaurant, item, price, df.format(dateobj)));
+                itemChild.setValue(new Item(restaurant, item, price, date.getText().toString()));
 
                 //UI changes
                 restaurantText.setVisibility(View.GONE);
