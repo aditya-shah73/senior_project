@@ -52,9 +52,12 @@ public class GetNearbyPlacesData extends AsyncTask<Object, String, String> {
             double lng = Double.parseDouble(googlePlace.get("lng"));
             String placeName = googlePlace.get("place_name");
             String vicinity = googlePlace.get("vicinity");
+            String rating = googlePlace.get("rating");
+            String priceLevel = googlePlace.get("price_level");
             LatLng latLng = new LatLng(lat, lng);
             markerOptions.position(latLng);
-            markerOptions.title(placeName + " : " + vicinity);
+            markerOptions.title(placeName);
+            markerOptions.snippet("Rating: " + rating + " , Price Level: " + priceLevel);
             mMap.addMarker(markerOptions);
             markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
             //move map camera

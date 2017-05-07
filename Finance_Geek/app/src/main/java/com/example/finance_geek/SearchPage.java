@@ -60,6 +60,7 @@ public class SearchPage extends AppCompatActivity
     double latitude;
     double longitude;
     private int PROXIMITY_RADIUS = 10000;
+    LatLng restaurantLocation;
 
 
     @Override
@@ -96,7 +97,17 @@ public class SearchPage extends AppCompatActivity
             @Override
             public void onPlaceSelected(Place place) {
                 // TODO: Get info about the selected place.
-                String toastMsg = String.format("Place name: %s Rating: %s", place.getName(), place.getRating());
+                String toastMsg = String.format("%s , Rating: %s , Price Level: %s", place.getName(), place.getRating(), place.getPriceLevel());
+                restaurantLocation = place.getLatLng();
+                mMap.clear();
+                mMap.moveCamera(CameraUpdateFactory.newLatLng(restaurantLocation));
+                mMap.animateCamera(CameraUpdateFactory.zoomTo(11));
+                MarkerOptions markerOptions = new MarkerOptions();
+                markerOptions.position(restaurantLocation);
+                markerOptions.title((String) place.getName());
+                markerOptions.snippet("Rating: " + place.getRating() + " , Price Level: " + place.getPriceLevel());
+                mMap.addMarker(markerOptions);
+                markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
                 Toast.makeText(getApplicationContext(), toastMsg, Toast.LENGTH_LONG).show();
             }
 
@@ -158,7 +169,7 @@ public class SearchPage extends AppCompatActivity
                 Log.d("onClick", url);
                 GetNearbyPlacesData getNearbyPlacesData = new GetNearbyPlacesData();
                 getNearbyPlacesData.execute(DataTransfer);
-                Toast.makeText(SearchPage.this,"Nearby Restaurants", Toast.LENGTH_LONG).show();
+                Toast.makeText(SearchPage.this,"Searching for nearby restaurants", Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -169,7 +180,7 @@ public class SearchPage extends AppCompatActivity
         if (requestCode == PLACE_PICKER_REQUEST) {
             if (resultCode == RESULT_OK) {
                 Place place = PlacePicker.getPlace(data, this);
-                String toastMsg = String.format("Place name: %s Rating: %s", place.getName(), place.getRating());
+                String toastMsg = String.format("%s , Rating: %s , Price Level: %s", place.getName(), place.getRating(), place.getPriceLevel());
                 Toast.makeText(this, toastMsg, Toast.LENGTH_LONG).show();
             }
         }
