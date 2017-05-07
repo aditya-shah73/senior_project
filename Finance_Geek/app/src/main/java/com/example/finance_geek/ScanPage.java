@@ -349,7 +349,7 @@ public class ScanPage extends AppCompatActivity
         //writeToDB(OCRresult);
 
         String pattern1 = "(\\n)(\\d)(.*?)(\\$)((.)*)";
-        String pattern2 = "(\\n)(\\d)(.*?)((.)*)";
+        String pattern2 = "(\\d)(.*)(\\d)(\\.)(\\d*)";
         Pattern r = Pattern.compile(pattern1);
         Matcher m = r.matcher(OCRresult);
         Matcher test = r.matcher(OCRresult);
@@ -361,13 +361,22 @@ public class ScanPage extends AppCompatActivity
         if(!test.find()) {
             r = Pattern.compile(pattern2);
             m = r.matcher(OCRresult);
+            while(m.find()) {
+                String itemString = m.group(3) + m.group(4) + m.group(5);
+                Log.v("Item String", itemString);
+                itemName.add(m.group(2));
+                itemPrice.add(itemString);
+                //Log.v("Item Name", String.valueOf(itemName));
+                //Log.v("Item Price", String.valueOf(itemPrice));
+            }
         }
-
-        while(m.find()) {
-            itemName.add(m.group(3));
-            itemPrice.add(m.group(5));
-            //Log.v("Item Name", String.valueOf(itemName));
-            //Log.v("Item Price", String.valueOf(itemPrice));
+        if (test.find()) {
+            while (m.find()) {
+                itemName.add(m.group(3));
+                itemPrice.add(m.group(5));
+                //Log.v("Item Name", String.valueOf(itemName));
+                //Log.v("Item Price", String.valueOf(itemPrice));
+            }
         }
 
         Iterator<String> itName = itemName.iterator();
