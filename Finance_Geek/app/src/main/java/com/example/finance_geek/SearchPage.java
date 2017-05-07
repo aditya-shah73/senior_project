@@ -38,35 +38,31 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import android.support.v4.app.FragmentActivity;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
-import android.widget.RelativeLayout;
 import android.view.View;
 import android.widget.Toast;
 
 
-public class SearchPage extends AppCompatActivity
-        implements OnConnectionFailedListener, NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback,
-        GoogleApiClient.ConnectionCallbacks,
-        LocationListener{
+public class SearchPage extends AppCompatActivity implements OnConnectionFailedListener, NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, LocationListener{
 
     private GoogleApiClient mGoogleApiClient;
     private GoogleMap mMap;
     protected LocationRequest mLocationRequest;
     protected Marker mCurrLocationMarker;
     protected Location mLastLocation;
-
-    // Latitude, longitude, radius for restaurant location query
     double latitude;
     double longitude;
     private int PROXIMITY_RADIUS = 10000;
     LatLng restaurantLocation;
-
+    Animation animAlpha;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search__page);
+        animAlpha = AnimationUtils.loadAnimation(this, R.anim.anim_alpha);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -160,8 +156,8 @@ public class SearchPage extends AppCompatActivity
             String Restaurant = "restaurant";
             @Override
             public void onClick(View v) {
-                Log.d("onClick", "Button is Clicked");
                 mMap.clear();
+                v.startAnimation(animAlpha);
                 String url = getUrl(latitude, longitude, Restaurant);
                 Object[] DataTransfer = new Object[2];
                 DataTransfer[0] = mMap;

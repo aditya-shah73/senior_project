@@ -13,7 +13,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -22,6 +21,8 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
 
@@ -37,6 +38,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        final Animation animAlpha = AnimationUtils.loadAnimation(this, R.anim.anim_alpha);
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -67,11 +69,23 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         findViewById(R.id.signOutButton).setOnClickListener(this);
 
         signInButton = (Button) findViewById(R.id.sign_in_button);
-        signInButton.setOnClickListener(this);
+        signInButton.setOnClickListener(new Button.OnClickListener(){
+
+            @Override
+            public void onClick(View arg0) {
+                arg0.startAnimation(animAlpha);
+                signIn();
+            }});
         statusTextView = (TextView) findViewById(R.id.textView);
 
         signOutButton = (Button) findViewById(R.id.signOutButton);
-        signOutButton.setOnClickListener(this);
+        signOutButton.setOnClickListener(new Button.OnClickListener(){
+
+            @Override
+            public void onClick(View arg0) {
+                arg0.startAnimation(animAlpha);
+                signOut();
+            }});
     }
 
     protected void signIn() {
