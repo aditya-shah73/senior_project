@@ -330,8 +330,11 @@ public class HomePage extends AppCompatActivity
                 Item value = dataSnapshot.getValue(Item.class);
                 Log.v("value", value.toString());
 
+                sum = sum - value.price;
+                String stringPrice = String.valueOf(String.format("%.2f", sum)); //2 decimal places
+                totalPrice.setText("Total: $" + stringPrice);
 
-
+                totalPriceChild.child(date.getText().toString()).setValue(sum);
             }
 
             // The following functions are also required in ChildEventListener implementations.
