@@ -2,14 +2,18 @@ package com.example.finance_geek;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.text.InputType;
@@ -151,6 +155,10 @@ public class ScanPage extends AppCompatActivity
 
         mTess = new TessBaseAPI();
         mTess.init(datapath, language);
+
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            checkCameraPermission();
+        }
     }
 
     public void onLaunchCamera(View view) {
@@ -340,6 +348,33 @@ public class ScanPage extends AppCompatActivity
             }
         }
     }
+
+    public static final int MY_PERMISSIONS_REQUEST_CAMERA = 99;
+    public boolean checkCameraPermission(){
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+
+            // Asking user if explanation is needed
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    android.Manifest.permission.CAMERA)) {
+
+                ActivityCompat.requestPermissions(this,
+                        new String[]{android.Manifest.permission.CAMERA},
+                        MY_PERMISSIONS_REQUEST_CAMERA);
+
+
+            } else {
+                // No explanation needed, we can request the permission.
+                ActivityCompat.requestPermissions(this,
+                        new String[]{android.Manifest.permission.CAMERA},
+                        MY_PERMISSIONS_REQUEST_CAMERA);
+            }
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+
 
     public void processImage(){
         String OCRresult = null;
