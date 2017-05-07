@@ -60,12 +60,6 @@ public class ReportGraph extends Fragment {
             for (int c : ColorTemplate.COLORFUL_COLORS)
                 colors.add(c);
 
-            for (int c : ColorTemplate.LIBERTY_COLORS)
-                colors.add(c);
-
-            for (int c : ColorTemplate.PASTEL_COLORS)
-                colors.add(c);
-
             colors.add(ColorTemplate.getHoloBlue());
             dataSet.setColors(colors);
         }
