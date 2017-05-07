@@ -401,5 +401,4 @@ public class ScanPage extends AppCompatActivity
         DatabaseReference itemChild = itemListChild.push();
         itemChild.setValue(new Item(r, i, p, df.format(dateobj)));
     }
-
 }
