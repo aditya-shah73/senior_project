@@ -11,6 +11,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -23,11 +25,15 @@ public class SettingsPage extends AppCompatActivity
     Button signOutButton;
     private String email = "";
     private String name = "";
+    private MainActivity ma;
+    private Animation animAlpha;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings__page);
+        animAlpha = AnimationUtils.loadAnimation(this, R.anim.anim_alpha);
+        ma = new MainActivity();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -102,11 +108,13 @@ public class SettingsPage extends AppCompatActivity
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.log_out_button) {
+            v.startAnimation(animAlpha);
             Intent intent = new Intent(this, MainActivity.class);
             intent.putExtra("finish", true);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
+            ma.signOut();
             finish();
         }
     }

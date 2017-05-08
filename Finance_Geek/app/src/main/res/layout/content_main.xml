@@ -18,20 +18,11 @@
             android:id="@+id/sign_in_button"
             android:layout_width="140dp"
             android:layout_height="45dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="30dp"
             android:background="@drawable/buttonshape"
             android:text="Sign in"
             android:textColor="#FFFFFF"
             android:textSize="15sp" />
 
-        <Button
-            android:id="@+id/signOutButton"
-            android:layout_width="140dp"
-            android:layout_height="45dp"
-            android:layout_marginTop="20dp"
-            android:background="@drawable/buttonshape"
-            android:text="Sign Out"
-            android:textColor="#FFFFFF"
-            android:textSize="15sp" />
     </LinearLayout>
 </RelativeLayout>

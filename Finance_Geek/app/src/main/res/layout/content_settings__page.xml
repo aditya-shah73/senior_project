@@ -42,12 +42,13 @@
 
         <Button
             android:id="@+id/log_out_button"
-            android:layout_width="118dp"
+            android:layout_width="140dp"
             android:layout_height="wrap_content"
+            android:background="@drawable/button"
             android:layout_gravity="center"
             android:layout_marginTop="80dp"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
             android:text="Sign Out" />
-
-
     </LinearLayout>
 </RelativeLayout>

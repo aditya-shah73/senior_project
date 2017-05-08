@@ -32,7 +32,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     private static final int RC_SIGN_IN = 0;
     private static String TAG = "MAIN_ACTIVITY";
     Button signInButton;
-    Button signOutButton;
     TextView statusTextView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +65,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 .build();
 
         findViewById(R.id.sign_in_button).setOnClickListener(this);
-        findViewById(R.id.signOutButton).setOnClickListener(this);
 
         signInButton = (Button) findViewById(R.id.sign_in_button);
         signInButton.setOnClickListener(new Button.OnClickListener(){
@@ -77,15 +75,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 signIn();
             }});
         statusTextView = (TextView) findViewById(R.id.textView);
-
-        signOutButton = (Button) findViewById(R.id.signOutButton);
-        signOutButton.setOnClickListener(new Button.OnClickListener(){
-
-            @Override
-            public void onClick(View arg0) {
-                arg0.startAnimation(animAlpha);
-                signOut();
-            }});
     }
 
     protected void signIn() {
@@ -107,9 +96,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         switch (v.getId()) {
             case R.id.sign_in_button:
                 signIn();
-                break;
-            case R.id.signOutButton:
-                signOut();
                 break;
         }
     }

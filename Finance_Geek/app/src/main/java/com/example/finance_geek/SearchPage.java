@@ -56,7 +56,7 @@ public class SearchPage extends AppCompatActivity implements OnConnectionFailedL
     double longitude;
     private int PROXIMITY_RADIUS = 10000;
     LatLng restaurantLocation;
-    Animation animAlpha;
+    private Animation animAlpha;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
