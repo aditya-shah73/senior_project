@@ -422,7 +422,6 @@ public class HomePage extends AppCompatActivity
                 double priceValue = item.price;
 
                 Query myQuery = itemListChild.orderByChild("item").equalTo(restaurantValue);
-
                 itemListChild.child(item.getKey()).removeValue();
                 adapter.remove(adapter.getItem(position));
                 adapter.notifyDataSetChanged();

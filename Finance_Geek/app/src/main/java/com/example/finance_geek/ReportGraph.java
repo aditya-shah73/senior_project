@@ -3,6 +3,8 @@ package com.example.finance_geek;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.format.DateUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,25 +13,36 @@ import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.utils.ColorTemplate;
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class ReportGraph extends Fragment {
     PieChart chartView;
     ArrayList<Float> totalPriceData = new ArrayList<>();
     ArrayList<Date> totalDateData = new ArrayList<>();
+    ArrayList<String> weekly = new ArrayList<>();
+    ArrayList<Float> weekly_price = new ArrayList<>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.tab1_report, container, false);
         chartView = (PieChart) rootView.findViewById(R.id.chart);
-        setupPieCharts();
+        try {
+            setupPieCharts();
+        }
+        catch (ParseException e) {
+            e.printStackTrace();
+        }
         return rootView;
     }
 
-    private void setupPieCharts() {
+    private void setupPieCharts() throws ParseException {
         HomePage activity = new HomePage();
         Map<Date, Double> data_price_date = activity.getPriceDateData();
-
+        DateFormat df = new SimpleDateFormat("MMM dd, yyyy");
         for(Map.Entry<Date, Double> entry : data_price_date.entrySet())
         {
             double value = entry.getValue();
@@ -39,10 +52,32 @@ public class ReportGraph extends Fragment {
         }
 
         List<PieEntry> pieEntry = new ArrayList<>();
-
+        int j = 0;
         for(int i = 0; i < totalPriceData.size(); i++)
         {
-            pieEntry.add(new PieEntry(totalPriceData.get(i), totalDateData.get(i)));
+            Date dateobj = new Date();
+            Calendar cal = new GregorianCalendar();
+            cal.add(Calendar.DAY_OF_MONTH, -7);
+            Date sevenDaysAgo = cal.getTime();
+            String today = df.format(dateobj);
+            String week = df.format(sevenDaysAgo);
+            if(df.format(totalDateData.get(i)).equals(week))
+            {
+                j = i;
+            }
+        }
+
+        for(int a = j ; a<totalPriceData.size();a++)
+        {
+            weekly.add(df.format(totalDateData.get(a)));
+            weekly_price.add(totalPriceData.get(a));
+        }
+
+        for(int a = 0;a<weekly_price.size();a++)
+        {
+            Log.v("Filtered Dates: ", weekly.get(a));
+            Log.v("Filtered Prices: ", String.valueOf(weekly_price.get(a)));
+            pieEntry.add(new PieEntry(weekly_price.get(a), weekly.get(a)));
         }
 
         if(!(pieEntry.isEmpty()))
