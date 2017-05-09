@@ -179,10 +179,42 @@ public class ScanPage extends AppCompatActivity
                 Bundle extras = data.getExtras();
                 Bitmap imageBitmap = (Bitmap) extras.get("data");
                 Uri takenPhotoUri = getPhotoFileUri(photoFileName);
-                Bitmap takenImage = BitmapFactory.decodeFile(takenPhotoUri.getPath());
+                image = imageBitmap;
+                //Bitmap takenImage = BitmapFactory.decodeFile(takenPhotoUri.getPath());
                 imageView = (ImageView) findViewById(R.id.imageView);
-                imageView.setImageBitmap(imageBitmap);
-                saveImageToGallery();
+                imageView.setImageBitmap(image);
+
+                try {
+                    //Pop up text input for restaurant name
+                    AlertDialog.Builder alert = new AlertDialog.Builder(this);
+                    //alert.setTitle("Title");
+                    alert.setMessage("Enter the restaurant name");
+                    final EditText input = new EditText(this);
+                    input.setInputType(InputType.TYPE_CLASS_TEXT);
+                    alert.setView(input);
+
+                    // Set up the buttons
+                    alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            restaurant = input.getText().toString();
+                            processImage();
+                            saveImageToGallery();
+                        }
+                    });
+
+                    alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    });
+
+                    alert.show();
+                } catch (Exception e)
+                {
+                    Toast.makeText(this, "Picture wasn't taken!", Toast.LENGTH_SHORT).show();
+                }
             }
             else
             {
@@ -374,7 +406,6 @@ public class ScanPage extends AppCompatActivity
             return true;
         }
     }
-
 
     public void processImage(){
         String OCRresult = null;
