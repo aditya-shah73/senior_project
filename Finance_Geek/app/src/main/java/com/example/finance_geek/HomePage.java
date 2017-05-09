@@ -81,7 +81,7 @@ public class HomePage extends AppCompatActivity
     double sum = 0.0; //total price
 
     //data to send to Report Page
-    final static HashMap<String, Double> data_price_date = new HashMap<>();
+    final static HashMap<Date, Double> data_price_date = new HashMap<>();
     String data_date;
 
     //datepicker
@@ -179,8 +179,6 @@ public class HomePage extends AppCompatActivity
 
         //pass data to report page
 
-        Log.v("in map: ", "existing key");
-
         //get total price
         Query totalPriceQuery = totalPriceChild.orderByKey();
         totalPriceQuery.addChildEventListener(new ChildEventListener() {
@@ -190,9 +188,18 @@ public class HomePage extends AppCompatActivity
                 totalPriceDB = dataSnapshot.getValue(double.class);
                 totalPriceDateDB = dataSnapshot.getKey();
 
+                DateFormat df = new SimpleDateFormat("MMM dd, yyyy");
+                Date dateobj = new Date();
+                try {
+                    dateobj = df.parse(totalPriceDateDB);
+                }
+                catch(ParseException e) {
+                    e.printStackTrace();
+                }
+
                 DecimalFormat twoDecimals = new DecimalFormat("#.##");
 
-                data_price_date.put(totalPriceDateDB, Double.valueOf(twoDecimals.format(totalPriceDB)));
+                data_price_date.put(dateobj, Double.valueOf(twoDecimals.format(totalPriceDB)));
                 Log.v("DATE: ", totalPriceDateDB);
                 Log.v("PRICE ", Double.toString(totalPriceDB));
             }
@@ -202,9 +209,18 @@ public class HomePage extends AppCompatActivity
                 totalPriceDB = dataSnapshot.getValue(double.class);
                 totalPriceDateDB = dataSnapshot.getKey();
 
+                DateFormat df = new SimpleDateFormat("MMM dd, yyyy");
+                Date dateobj = new Date();
+                try {
+                    dateobj = df.parse(totalPriceDateDB);
+                }
+                catch(ParseException e) {
+                    e.printStackTrace();
+                }
+
                 DecimalFormat twoDecimals = new DecimalFormat("#.##");
 
-                data_price_date.put(totalPriceDateDB, Double.valueOf(twoDecimals.format(totalPriceDB)));
+                data_price_date.put(dateobj, Double.valueOf(twoDecimals.format(totalPriceDB)));
                 Log.v("DATE: ", totalPriceDateDB);
                 Log.v("PRICE ", Double.toString(totalPriceDB));
             }
@@ -218,12 +234,6 @@ public class HomePage extends AppCompatActivity
             @Override
             public void onCancelled(DatabaseError databaseError) {}
         });
-
-
-
-        for (Map.Entry<String, Double> entry : data_price_date.entrySet()) {
-            Log.v("Map: ", entry.getKey() + ", " + entry.getValue());
-        }
 
         //update listview based on datepicker
         date.addTextChangedListener(new TextWatcher() {
@@ -265,7 +275,6 @@ public class HomePage extends AppCompatActivity
                 if(adapter.isEmpty()) {
                     totalPrice.setText("Total: $0.00");
                     sum = 0.0;
-                    Log.v("IN EMPTY", "IN EMPTY");
                 }
 
                 //get total price
@@ -320,19 +329,13 @@ public class HomePage extends AppCompatActivity
                         totalPriceChild.child(date.getText().toString()).setValue(sum);
                     }
                 }
-
-                Log.v("Item: ", value.toString());
-                Log.v("Date: ", value.date);
                 value.setKey(dataSnapshot.getKey());
                 }
 
 
             // This function is called each time a child item is removed.
             public void onChildRemoved(DataSnapshot dataSnapshot){
-                Log.v("onChildRemoved", "method entered");
-
                 Item value = dataSnapshot.getValue(Item.class);
-                Log.v("value", value.toString());
 
                 //update sum
                 sum = sum - value.price;
@@ -392,7 +395,6 @@ public class HomePage extends AppCompatActivity
                 }
 
                 DatabaseReference itemChild = itemListChild.push();
-                Log.d("itemChild", itemChild.getKey());
 
                 itemChild.setValue(new Item(restaurant, item, price, date.getText().toString(), itemChild.getKey()));
 
@@ -420,11 +422,6 @@ public class HomePage extends AppCompatActivity
                 double priceValue = item.price;
 
                 Query myQuery = itemListChild.orderByChild("item").equalTo(restaurantValue);
-                Log.v("QUERY", myQuery.toString());
-                Log.v("Restaurant", restaurantValue);
-                Log.v("Item", itemValue);
-                Log.v("Price", Double.toString(priceValue));
-
                 itemListChild.child(item.getKey()).removeValue();
                 adapter.remove(adapter.getItem(position));
                 adapter.notifyDataSetChanged();
@@ -535,8 +532,14 @@ public class HomePage extends AppCompatActivity
         }
     }
 
-    public static HashMap getPriceDateData() {
-        return data_price_date;
+    public static Map getPriceDateData() {
+        //sort map by date
+        Map<Date, Double> map = new TreeMap<Date, Double>(data_price_date);
+
+        for (Map.Entry entry : map.entrySet()) {
+            Log.v("MAP:", (entry.getKey() + ", " + entry.getValue()));
+        }
+        return map;
     }
 
     public void showDialogOnButtonClick() {
@@ -552,7 +555,9 @@ public class HomePage extends AppCompatActivity
     @Override
     protected Dialog onCreateDialog(int id) {
         if(id == DIALOG_ID) {
-            return new DatePickerDialog(this, dpickerListner, year_x, month_x, day_x);
+            DatePickerDialog date = new DatePickerDialog(this, dpickerListner, year_x, month_x, day_x);
+            date.getDatePicker().setMaxDate(System.currentTimeMillis());
+            return date;
         }
         return null;
     }
@@ -560,6 +565,7 @@ public class HomePage extends AppCompatActivity
     private DatePickerDialog.OnDateSetListener dpickerListner = new DatePickerDialog.OnDateSetListener() {
        @Override
        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfYear) {
+
            year_x = year;
            month_x = monthOfYear;
            day_x = dayOfYear;
