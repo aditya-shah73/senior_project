@@ -16,7 +16,7 @@ import java.util.*;
 public class ReportGraph extends Fragment {
     PieChart chartView;
     ArrayList<Float> totalPriceData = new ArrayList<>();
-    ArrayList<String> totalDateData = new ArrayList<>();
+    ArrayList<Date> totalDateData = new ArrayList<>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -28,9 +28,9 @@ public class ReportGraph extends Fragment {
 
     private void setupPieCharts() {
         HomePage activity = new HomePage();
-        HashMap<String, Double> data_price_date = activity.getPriceDateData();
+        Map<Date, Double> data_price_date = activity.getPriceDateData();
 
-        for(Map.Entry<String, Double> entry : data_price_date.entrySet())
+        for(Map.Entry<Date, Double> entry : data_price_date.entrySet())
         {
             double value = entry.getValue();
 
