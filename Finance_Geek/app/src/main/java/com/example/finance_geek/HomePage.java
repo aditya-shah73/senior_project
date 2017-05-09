@@ -555,7 +555,9 @@ public class HomePage extends AppCompatActivity
     @Override
     protected Dialog onCreateDialog(int id) {
         if(id == DIALOG_ID) {
-            return new DatePickerDialog(this, dpickerListner, year_x, month_x, day_x);
+            DatePickerDialog date = new DatePickerDialog(this, dpickerListner, year_x, month_x, day_x);
+            date.getDatePicker().setMaxDate(System.currentTimeMillis());
+            return date;
         }
         return null;
     }
@@ -563,6 +565,7 @@ public class HomePage extends AppCompatActivity
     private DatePickerDialog.OnDateSetListener dpickerListner = new DatePickerDialog.OnDateSetListener() {
        @Override
        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfYear) {
+
            year_x = year;
            month_x = monthOfYear;
            day_x = dayOfYear;
