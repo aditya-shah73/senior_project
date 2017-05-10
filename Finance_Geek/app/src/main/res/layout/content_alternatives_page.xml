@@ -1,11 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:paddingBottom="16dp"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    android:paddingTop="16dp"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.example.finance_geek.AlternativesPage"
     tools:showIn="@layout/app_bar_alternatives_page">
 
-</android.support.constraint.ConstraintLayout>
+    <TextView
+        android:id="@+id/show_selected_location"
+        android:layout_width="230dp"
+        android:layout_height="wrap_content"
+        android:text="Selected Location Will Be Shown Here"
+        android:textSize="20sp"
+        tools:layout_editor_absoluteY="166dp"
+        tools:layout_editor_absoluteX="77dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="108dp" />
+
+</RelativeLayout>
