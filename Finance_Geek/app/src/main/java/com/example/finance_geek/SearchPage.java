@@ -214,6 +214,9 @@ public class SearchPage extends AppCompatActivity implements OnConnectionFailedL
         } else if (id == R.id.nav_camera) {
             Intent i = new Intent(SearchPage.this, ScanPage.class);
             startActivity(i);
+        } else if (id == R.id.nav_alternatives) {
+            Intent i = new Intent(SearchPage.this, AlternativesPage.class);
+            startActivity(i);
         } else if (id == R.id.nav_search) {
 
         } else if (id == R.id.nav_settings) {

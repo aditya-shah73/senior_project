@@ -493,6 +493,9 @@ public class HomePage extends AppCompatActivity
         } else if (id == R.id.nav_camera) {
             Intent i = new Intent(HomePage.this, ScanPage.class);
             startActivity(i);
+        } else if (id == R.id.nav_alternatives) {
+            Intent i = new Intent(HomePage.this, AlternativesPage.class);
+            startActivity(i);
         } else if (id == R.id.nav_search) {
             Intent i = new Intent(HomePage.this, SearchPage.class);
             startActivity(i);

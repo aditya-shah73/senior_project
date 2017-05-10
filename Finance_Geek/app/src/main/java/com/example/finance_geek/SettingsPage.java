@@ -93,6 +93,9 @@ public class SettingsPage extends AppCompatActivity
         } else if (id == R.id.nav_camera) {
             Intent i = new Intent(SettingsPage.this, ScanPage.class);
             startActivity(i);
+        } else if (id == R.id.nav_alternatives) {
+            Intent i = new Intent(SettingsPage.this, AlternativesPage.class);
+            startActivity(i);
         } else if (id == R.id.nav_search) {
             Intent i = new Intent(SettingsPage.this, SearchPage.class);
             startActivity(i);

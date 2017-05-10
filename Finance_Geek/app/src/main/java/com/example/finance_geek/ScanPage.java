@@ -325,6 +325,9 @@ public class ScanPage extends AppCompatActivity
             startActivity(i);
         } else if (id == R.id.nav_camera) {
 
+        } else if (id == R.id.nav_alternatives) {
+            Intent i = new Intent(ScanPage.this, AlternativesPage.class);
+            startActivity(i);
         } else if (id == R.id.nav_search) {
             Intent i = new Intent(ScanPage.this, SearchPage.class);
             startActivity(i);
