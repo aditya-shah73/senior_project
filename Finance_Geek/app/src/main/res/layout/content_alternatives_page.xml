@@ -12,16 +12,12 @@
     tools:context="com.example.finance_geek.AlternativesPage"
     tools:showIn="@layout/app_bar_alternatives_page">
 
-    <TextView
-        android:id="@+id/show_selected_location"
-        android:layout_width="230dp"
-        android:layout_height="wrap_content"
-        android:text="Selected Location Will Be Shown Here"
-        android:textSize="20sp"
-        tools:layout_editor_absoluteY="166dp"
-        tools:layout_editor_absoluteX="77dp"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="108dp" />
+    <ListView
+        android:id="@+id/alternatves"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
+    </ListView>
 
 </RelativeLayout>

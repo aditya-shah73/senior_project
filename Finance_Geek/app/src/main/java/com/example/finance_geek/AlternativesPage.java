@@ -2,27 +2,29 @@ package com.example.finance_geek;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Button;
-import android.widget.TextView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
-import com.google.android.gms.location.places.Place;
-import com.google.android.gms.location.places.ui.PlacePicker;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 public class AlternativesPage extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-
-    private final int REQUEST_CODE_PLACEPICKER = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,12 +42,71 @@ public class AlternativesPage extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        FloatingActionButton gotoButton = (FloatingActionButton) findViewById(R.id.go_to_button);
+        // Get ListView object from xml
+        final ListView listView = (ListView) findViewById(R.id.alternatves);
 
-        gotoButton.setOnClickListener(new View.OnClickListener() {
+        // Create a new Adapter
+        final ArrayAdapter<HomePage.Item> adapter = new ArrayAdapter<HomePage.Item>(this,
+                android.R.layout.simple_list_item_2, android.R.id.text2);
+
+        // Assign adapter to ListView
+        listView.setAdapter(adapter);
+
+        // Connect to the Firebase database
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+
+        // Get a reference to the child items in the database
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        final DatabaseReference myRef = database.getReference(user.getUid());
+        final DatabaseReference itemListChild = myRef.child("Item List");
+        final DatabaseReference restaurant = database.getReference("Restaurant");
+
+        //query to get restaurants
+        Query restaurants = restaurant.orderByKey();
+        restaurants.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onClick(View view) {
-                startPlacePickerActivity();
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for(DataSnapshot singleSnapshot : dataSnapshot.getChildren()){
+                    String key = singleSnapshot.getKey();
+                    Log.v("RESTAURANT: ", key);
+
+                    //query to get restaurant items
+                    Query restaurantItem = restaurant.child(key).child("Item");
+                    restaurantItem.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            for(DataSnapshot singleSnapshot : dataSnapshot.getChildren()){
+                                String key = singleSnapshot.getKey();
+                                String value = singleSnapshot.getValue().toString();
+                                Log.v("RESTAURANT ITEMS: ", key + ", " + value);
+                            }
+                        }
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        //Query to get user items in database
+        Query item = itemListChild.orderByChild("item");
+        item.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for(DataSnapshot singleSnapshot : dataSnapshot.getChildren()){
+                    HomePage.Item value = singleSnapshot.getValue(HomePage.Item.class);
+
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
             }
         });
     }
@@ -110,34 +171,5 @@ public class AlternativesPage extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
-    }
-
-    private void startPlacePickerActivity() {
-        PlacePicker.IntentBuilder intentBuilder = new PlacePicker.IntentBuilder();
-        // this would only work if you have your Google Places API working
-
-        try {
-            Intent intent = intentBuilder.build(this);
-            startActivityForResult(intent, REQUEST_CODE_PLACEPICKER);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void displaySelectedPlaceFromPlacePicker(Intent data) {
-        Place placeSelected = PlacePicker.getPlace(data, this);
-
-        String name = placeSelected.getName().toString();
-        String address = placeSelected.getAddress().toString();
-
-        TextView enterCurrentLocation = (TextView) findViewById(R.id.show_selected_location);
-        enterCurrentLocation.setText(name + ", " + address);
-    }
-
-    @Override
-    protected  void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_CODE_PLACEPICKER && resultCode == RESULT_OK) {
-            displaySelectedPlaceFromPlacePicker(data);
-        }
     }
 }

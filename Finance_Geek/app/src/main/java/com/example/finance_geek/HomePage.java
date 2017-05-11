@@ -200,8 +200,6 @@ public class HomePage extends AppCompatActivity
                 DecimalFormat twoDecimals = new DecimalFormat("#.##");
 
                 data_price_date.put(dateobj, Double.valueOf(twoDecimals.format(totalPriceDB)));
-                Log.v("DATE: ", totalPriceDateDB);
-                Log.v("PRICE ", Double.toString(totalPriceDB));
             }
 
             @Override
@@ -221,8 +219,6 @@ public class HomePage extends AppCompatActivity
                 DecimalFormat twoDecimals = new DecimalFormat("#.##");
 
                 data_price_date.put(dateobj, Double.valueOf(twoDecimals.format(totalPriceDB)));
-                Log.v("DATE: ", totalPriceDateDB);
-                Log.v("PRICE ", Double.toString(totalPriceDB));
             }
 
             @Override
@@ -284,7 +280,7 @@ public class HomePage extends AppCompatActivity
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         for(DataSnapshot singleSnapshot : dataSnapshot.getChildren()){
                             Double price = singleSnapshot.getValue(Double.class);
-                            Log.v("PRICE FROM DB: ", price.toString());
+
                             sum = price;
                             String stringPrice = String.valueOf(String.format("%.2f", sum)); //2 decimal places
                             totalPrice.setText("Total: $" + stringPrice);
@@ -538,10 +534,6 @@ public class HomePage extends AppCompatActivity
     public static Map getPriceDateData() {
         //sort map by date
         Map<Date, Double> map = new TreeMap<Date, Double>(data_price_date);
-
-        for (Map.Entry entry : map.entrySet()) {
-            Log.v("MAP:", (entry.getKey() + ", " + entry.getValue()));
-        }
         return map;
     }
 
