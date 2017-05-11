@@ -23,8 +23,13 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class AlternativesPage extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    HashMap<String, Double> data = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +51,7 @@ public class AlternativesPage extends AppCompatActivity
         final ListView listView = (ListView) findViewById(R.id.alternatves);
 
         // Create a new Adapter
-        final ArrayAdapter<HomePage.Item> adapter = new ArrayAdapter<HomePage.Item>(this,
+        final ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_list_item_2, android.R.id.text2);
 
         // Assign adapter to ListView
@@ -61,31 +66,16 @@ public class AlternativesPage extends AppCompatActivity
         final DatabaseReference itemListChild = myRef.child("Item List");
         final DatabaseReference restaurant = database.getReference("Restaurant");
 
-        //query to get restaurants
-        Query restaurants = restaurant.orderByKey();
-        restaurants.addListenerForSingleValueEvent(new ValueEventListener() {
+        //Query to get user items in database
+        final Query item = itemListChild.orderByChild("item");
+        item.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for(DataSnapshot singleSnapshot : dataSnapshot.getChildren()){
-                    String key = singleSnapshot.getKey();
-                    Log.v("RESTAURANT: ", key);
-
-                    //query to get restaurant items
-                    Query restaurantItem = restaurant.child(key).child("Item");
-                    restaurantItem.addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            for(DataSnapshot singleSnapshot : dataSnapshot.getChildren()){
-                                String key = singleSnapshot.getKey();
-                                String value = singleSnapshot.getValue().toString();
-                                Log.v("RESTAURANT ITEMS: ", key + ", " + value);
-                            }
-                        }
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-
-                        }
-                    });
+                    HomePage.Item value = singleSnapshot.getValue(HomePage.Item.class);
+                    String name = value.item;
+                    double price = value.price;
+                    data.put(name, price);
                 }
             }
             @Override
@@ -94,14 +84,42 @@ public class AlternativesPage extends AppCompatActivity
             }
         });
 
-        //Query to get user items in database
-        Query item = itemListChild.orderByChild("item");
-        item.addListenerForSingleValueEvent(new ValueEventListener() {
+        //query to get restaurants
+        Query restaurants = restaurant.orderByKey();
+        restaurants.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for(DataSnapshot singleSnapshot : dataSnapshot.getChildren()){
-                    HomePage.Item value = singleSnapshot.getValue(HomePage.Item.class);
+                    String restaurantName = singleSnapshot.getKey();
+                    Log.v("RESTAURANT: ", restaurantName);
 
+                    //query to get restaurant items
+                    Query restaurantItem = restaurant.child(restaurantName).child("Item");
+                    restaurantItem.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            for(DataSnapshot singleSnapshot : dataSnapshot.getChildren()){
+                                String key = singleSnapshot.getKey();
+                                double value = Double.parseDouble(singleSnapshot.getValue().toString());
+                                Log.v("RESTAURANT ITEMS: ", key + ", " + value);
+
+                                for (Map.Entry entry : data.entrySet()) {
+                                    if(entry.getKey().equals(key)) {
+                                        Log.v("FIRST", "IF");
+
+                                        if((double)entry.getValue() > value) {
+                                            adapter.add(key);
+                                            Log.v("SECOND", "IF");
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
                 }
             }
             @Override
