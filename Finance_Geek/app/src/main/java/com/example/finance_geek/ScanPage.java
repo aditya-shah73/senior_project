@@ -180,14 +180,12 @@ public class ScanPage extends AppCompatActivity
                 Bitmap imageBitmap = (Bitmap) extras.get("data");
                 Uri takenPhotoUri = getPhotoFileUri(photoFileName);
                 image = imageBitmap;
-                //Bitmap takenImage = BitmapFactory.decodeFile(takenPhotoUri.getPath());
                 imageView = (ImageView) findViewById(R.id.imageView);
                 imageView.setImageBitmap(image);
 
                 try {
                     //Pop up text input for restaurant name
                     AlertDialog.Builder alert = new AlertDialog.Builder(this);
-                    //alert.setTitle("Title");
                     alert.setMessage("Enter the restaurant name");
                     final EditText input = new EditText(this);
                     input.setInputType(InputType.TYPE_CLASS_TEXT);
@@ -412,7 +410,6 @@ public class ScanPage extends AppCompatActivity
         mTess.setImage(image);
         OCRresult = mTess.getUTF8Text();
         Log.v("OCR Message", OCRresult);
-        //writeToDB(OCRresult);
 
         String pattern1 = "(\\n)(\\d)(.*?)(\\$)((.)*)";
         String pattern2 = "(\\d)(.*)(\\d)(\\.)(\\d*)";
@@ -432,16 +429,12 @@ public class ScanPage extends AppCompatActivity
                 Log.v("Item String", itemString);
                 itemName.add(m.group(2));
                 itemPrice.add(itemString);
-                //Log.v("Item Name", String.valueOf(itemName));
-                //Log.v("Item Price", String.valueOf(itemPrice));
             }
         }
         if (test.find()) {
             while (m.find()) {
                 itemName.add(m.group(3));
                 itemPrice.add(m.group(5));
-                //Log.v("Item Name", String.valueOf(itemName));
-                //Log.v("Item Price", String.valueOf(itemPrice));
             }
         }
 

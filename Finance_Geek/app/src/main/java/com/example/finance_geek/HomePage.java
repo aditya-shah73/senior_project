@@ -200,8 +200,6 @@ public class HomePage extends AppCompatActivity
                 DecimalFormat twoDecimals = new DecimalFormat("#.##");
 
                 data_price_date.put(dateobj, Double.valueOf(twoDecimals.format(totalPriceDB)));
-                Log.v("DATE: ", totalPriceDateDB);
-                Log.v("PRICE ", Double.toString(totalPriceDB));
             }
 
             @Override
@@ -221,8 +219,6 @@ public class HomePage extends AppCompatActivity
                 DecimalFormat twoDecimals = new DecimalFormat("#.##");
 
                 data_price_date.put(dateobj, Double.valueOf(twoDecimals.format(totalPriceDB)));
-                Log.v("DATE: ", totalPriceDateDB);
-                Log.v("PRICE ", Double.toString(totalPriceDB));
             }
 
             @Override
