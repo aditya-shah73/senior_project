@@ -3,11 +3,11 @@ package com.example.finance_geek;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
@@ -17,14 +17,19 @@ import com.github.mikephil.charting.utils.ColorTemplate;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.List;
+import java.util.Map;
 
 public class ReportGraph extends Fragment {
-    PieChart chartView;
-    ArrayList<Float> totalPriceData = new ArrayList<>();
-    ArrayList<Date> totalDateData = new ArrayList<>();
-    ArrayList<String> weekly = new ArrayList<>();
-    ArrayList<Float> weekly_price = new ArrayList<>();
+    private PieChart chartView;
+    private ArrayList<Float> totalPriceData = new ArrayList<>();
+    private ArrayList<Date> totalDateData = new ArrayList<>();
+    private ArrayList<String> weekly = new ArrayList<>();
+    private ArrayList<Float> weekly_price = new ArrayList<>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -46,7 +51,6 @@ public class ReportGraph extends Fragment {
         for(Map.Entry<Date, Double> entry : data_price_date.entrySet())
         {
             double value = entry.getValue();
-
             totalDateData.add(entry.getKey());
             totalPriceData.add((float) value);
         }
@@ -75,8 +79,6 @@ public class ReportGraph extends Fragment {
 
         for(int a = 0;a<weekly_price.size();a++)
         {
-            Log.v("Filtered Dates: ", weekly.get(a));
-            Log.v("Filtered Prices: ", String.valueOf(weekly_price.get(a)));
             pieEntry.add(new PieEntry(weekly_price.get(a), weekly.get(a)));
         }
 
