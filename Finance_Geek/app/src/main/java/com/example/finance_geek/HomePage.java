@@ -348,8 +348,6 @@ public class HomePage extends AppCompatActivity
                 if(sum == 0.0) {
                     totalPriceChild.child(date.getText().toString()).removeValue();
                 }
-
-
             }
 
             // The following functions are also required in ChildEventListener implementations.
