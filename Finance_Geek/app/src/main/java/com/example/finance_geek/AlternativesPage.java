@@ -30,6 +30,8 @@ public class AlternativesPage extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     HashMap<String, Double> data = new HashMap<>();
+    String address;
+    String number;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,8 +92,40 @@ public class AlternativesPage extends AppCompatActivity
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for(DataSnapshot singleSnapshot : dataSnapshot.getChildren()){
-                    String restaurantName = singleSnapshot.getKey();
-                    Log.v("RESTAURANT: ", restaurantName);
+                    final String restaurantName = singleSnapshot.getKey();
+                    Log.v("RESTAURANT_NAME: ", restaurantName);
+
+                    //query to get restaurant address
+                    final Query restaurantAddress = restaurant.child(restaurantName).orderByKey().equalTo("Address");
+                    restaurantAddress.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            for(DataSnapshot singleSnapshot : dataSnapshot.getChildren()){
+                                address = singleSnapshot.getValue().toString();
+                                Log.v("RESTAURANT_ADDRESS: ", address);
+                            }
+                        }
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+
+                    //query to get restaurant phone number
+                    final Query restaurantNumber = restaurant.child(restaurantName).orderByKey().equalTo("Phone Number");
+                    restaurantNumber.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            for(DataSnapshot singleSnapshot : dataSnapshot.getChildren()){
+                                number = singleSnapshot.getValue().toString();
+                                Log.v("RESTAURANT_NUMBER: ", number);
+                            }
+                        }
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
 
                     //query to get restaurant items
                     Query restaurantItem = restaurant.child(restaurantName).child("Item");
@@ -103,12 +137,18 @@ public class AlternativesPage extends AppCompatActivity
                                 double value = Double.parseDouble(singleSnapshot.getValue().toString());
                                 Log.v("RESTAURANT ITEMS: ", key + ", " + value);
 
+                                //add to listview
                                 for (Map.Entry entry : data.entrySet()) {
                                     if(entry.getKey().equals(key)) {
                                         Log.v("FIRST", "IF");
 
                                         if((double)entry.getValue() > value) {
-                                            adapter.add(key);
+                                            adapter.add(key + "\n"
+                                                    + "Restaurant: " + restaurantName + "\n"
+                                                    + "Address: " + address + "\n"
+                                                    + "Number: " + number
+
+                                            );
                                             Log.v("SECOND", "IF");
                                         }
                                     }
