@@ -345,6 +345,7 @@ public class HomePage extends AppCompatActivity
                     sum = 0.0;
                 }
 
+                //remove total price from db
                 if(sum == 0.0) {
                     totalPriceChild.child(date.getText().toString()).removeValue();
                 }
