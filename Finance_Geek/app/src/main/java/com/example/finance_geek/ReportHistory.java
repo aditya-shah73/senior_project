@@ -1,87 +1,92 @@
 package com.example.finance_geek;
 
-import android.graphics.Paint;
-import android.os.Bundle;
+import android.graphics.Color;
 import android.support.v4.app.Fragment;
-import android.util.Log;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
-
-import com.github.mikephil.charting.charts.PieChart;
-import com.github.mikephil.charting.data.PieData;
-import com.github.mikephil.charting.data.PieDataSet;
-import com.github.mikephil.charting.data.PieEntry;
-import com.github.mikephil.charting.utils.ColorTemplate;
-
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.GregorianCalendar;
 import java.util.Map;
 
 public class ReportHistory extends Fragment {
 
+    private LineChart lineChart;
+    private ArrayList<Float> totalPriceData = new ArrayList<>();
+    private ArrayList<Date> totalDateData = new ArrayList<>();
+    private ArrayList<String> dateData = new ArrayList<>();
+    private ArrayList<Float> priceData = new ArrayList<>();
+    private ArrayList<String> monthly = new ArrayList<>();
+    private ArrayList<Float> monthly_price = new ArrayList<>();
+
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.tab2_report_history, container, false);
-        chartView = (PieChart) rootView.findViewById(R.id.chart);
-        setupPieCharts();
+        lineChart = (LineChart) rootView.findViewById(R.id.line_chart);
+        setupLineCharts();
         return rootView;
     }
 
-    PieChart chartView;
-    ArrayList<Float> totalPriceData = new ArrayList<>();
-    ArrayList<Date> totalDateData = new ArrayList<>();
-
-    private void setupPieCharts() {
+    private void setupLineCharts() {
         HomePage activity = new HomePage();
         Map<Date, Double> data_price_date = activity.getPriceDateData();
-        DateFormat df = new SimpleDateFormat("MMM dd, yyyy");
+        DateFormat df = new SimpleDateFormat("MMddyy");
+        ArrayList<Entry> graphData = new ArrayList<>();
+        ArrayList<ILineDataSet> lds1 = new ArrayList<>();
+        LineDataSet lds;
+        LineData ld;
+        float sum = 0;
         for(Map.Entry<Date, Double> entry : data_price_date.entrySet())
         {
             double value = entry.getValue();
-
             totalDateData.add(entry.getKey());
             totalPriceData.add((float) value);
         }
 
-        List<PieEntry> pieEntry = new ArrayList<>();
+        Calendar cal = new GregorianCalendar();
+        cal.add(Calendar.MONTH, -1);
 
-        for(int i = 0; i < totalPriceData.size(); i++)
+        for(int a = 0 ; a<totalPriceData.size();a++)
         {
-            pieEntry.add(new PieEntry(totalPriceData.get(i), df.format(totalDateData.get(i))));
+            monthly.add(df.format(totalDateData.get(a)));
+            monthly_price.add(totalPriceData.get(a));
         }
 
-        if(!(pieEntry.isEmpty()))
+        for(int a = 0 ; a<monthly.size();a++)
         {
-            PieDataSet dataSet = new PieDataSet(pieEntry, "");
-            PieData data = new PieData(dataSet);
-            chartView.setData(data);
-            chartView.invalidate();
-            chartView.setDrawEntryLabels(true);
-            chartView.animateY(5000);
-            data.setValueTextSize(8f);
-
-            ArrayList<Integer> colors = new ArrayList<>();
-
-            for (int c : ColorTemplate.PASTEL_COLORS)
-                colors.add(c);
-
-            colors.add(ColorTemplate.getHoloBlue());
-            dataSet.setColors(colors);
+            if(monthly.get(a).substring(1,2).equals((cal.get(Calendar.MONTH) + 1) + ""))
+            {
+                dateData.add(monthly.get(a));
+                priceData.add(monthly_price.get(a));
+                sum = sum + monthly_price.get(a);
+            }
         }
-        else
+
+        int s = (int) sum;
+
+        String str = "Spending trends over the past month with total expenditure of $" + (s)  + "";
+
+        for(int i=0;i<priceData.size();i++)
         {
-            chartView.setNoDataText("No purchase history!");
-            Paint p = chartView.getPaint(PieChart.PAINT_INFO);
-            p.setTextSize(60);
+            graphData.add(new Entry(i+1,priceData.get(i)));
+            lds = new LineDataSet(graphData,str);
+            lds.setDrawCircles(false);
+            lds.setColor(Color.BLUE);
+            lds1.add(lds);
+            ld = new LineData(lds);
+            lineChart.setData(ld);
         }
+        lineChart.setVisibleXRangeMaximum(65f);
+        lineChart.animateY(5000);
     }
 }
