@@ -135,6 +135,7 @@ public class AlternativesPage extends AppCompatActivity
                             for(DataSnapshot singleSnapshot : dataSnapshot.getChildren()){
                                 String key = singleSnapshot.getKey();
                                 double value = Double.parseDouble(singleSnapshot.getValue().toString());
+                                String price = String.valueOf(String.format("%.2f", value));
                                 Log.v("RESTAURANT ITEMS: ", key + ", " + value);
 
                                 //add to listview
@@ -145,6 +146,7 @@ public class AlternativesPage extends AppCompatActivity
                                         if((double)entry.getValue() > value) {
                                             adapter.add(key + "\n"
                                                     + "Restaurant: " + restaurantName + "\n"
+                                                    + "Price: " + price + "\n"
                                                     + "Address: " + address + "\n"
                                                     + "Number: " + number
 
