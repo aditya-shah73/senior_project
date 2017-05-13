@@ -336,14 +336,19 @@ public class HomePage extends AppCompatActivity
                 //update sum
                 sum = sum - value.price;
 
-                if(sum < 0) {
-                    sum = 0.0;
-                }
-
                 String stringPrice = String.valueOf(String.format("%.2f", sum)); //2 decimal places
                 totalPrice.setText("Total: $" + stringPrice);
 
                 totalPriceChild.child(date.getText().toString()).setValue(sum);
+
+                if(sum < 0) {
+                    sum = 0.0;
+                }
+
+                if(sum == 0.0) {
+                    totalPriceChild.child(date.getText().toString()).removeValue();
+                }
+
 
             }
 
