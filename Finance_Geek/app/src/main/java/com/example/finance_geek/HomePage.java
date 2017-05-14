@@ -350,14 +350,14 @@ public class HomePage extends AppCompatActivity
                 //update sum
                 sum = sum - value.price;
 
+                if(sum < 0) {
+                    sum = 0.0;
+                }
+
                 String stringPrice = String.valueOf(String.format("%.2f", sum)); //2 decimal places
                 totalPrice.setText("Total: $" + stringPrice);
 
                 totalPriceChild.child(date.getText().toString()).setValue(sum);
-
-                if(sum < 0) {
-                    sum = 0.0;
-                }
 
                 //remove total price from db
                 if(sum == 0.0) {
@@ -552,6 +552,11 @@ public class HomePage extends AppCompatActivity
     public static Map getPriceDateData() {
         //sort map by date
         Map<Date, Double> map = new TreeMap<Date, Double>(data_price_date);
+
+        for(Map.Entry<Date, Double> entry : data_price_date.entrySet())
+        {
+            Log.v("KEY, VALUE: ", entry.getKey().toString() + ", " + entry.getValue().toString());
+        }
         return map;
     }
 
