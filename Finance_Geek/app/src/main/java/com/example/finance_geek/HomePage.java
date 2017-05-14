@@ -222,7 +222,21 @@ public class HomePage extends AppCompatActivity
             }
 
             @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {}
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                totalPriceDB = dataSnapshot.getValue(double.class);
+                totalPriceDateDB = dataSnapshot.getKey();
+
+                DateFormat df = new SimpleDateFormat("MMM dd, yyyy");
+                Date dateobj = new Date();
+                try {
+                    dateobj = df.parse(totalPriceDateDB);
+                }
+                catch(ParseException e) {
+                    e.printStackTrace();
+                }
+
+                data_price_date.remove(dateobj);
+            }
 
             @Override
             public void onChildMoved(DataSnapshot dataSnapshot, String prevChildKey) {}
