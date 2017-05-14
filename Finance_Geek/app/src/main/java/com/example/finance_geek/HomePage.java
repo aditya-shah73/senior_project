@@ -222,7 +222,21 @@ public class HomePage extends AppCompatActivity
             }
 
             @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {}
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                totalPriceDB = dataSnapshot.getValue(double.class);
+                totalPriceDateDB = dataSnapshot.getKey();
+
+                DateFormat df = new SimpleDateFormat("MMM dd, yyyy");
+                Date dateobj = new Date();
+                try {
+                    dateobj = df.parse(totalPriceDateDB);
+                }
+                catch(ParseException e) {
+                    e.printStackTrace();
+                }
+
+                data_price_date.remove(dateobj);
+            }
 
             @Override
             public void onChildMoved(DataSnapshot dataSnapshot, String prevChildKey) {}
@@ -345,6 +359,10 @@ public class HomePage extends AppCompatActivity
 
                 totalPriceChild.child(date.getText().toString()).setValue(sum);
 
+                //remove total price from db
+                if(sum == 0.0) {
+                    totalPriceChild.child(date.getText().toString()).removeValue();
+                }
             }
 
             // The following functions are also required in ChildEventListener implementations.
@@ -534,6 +552,11 @@ public class HomePage extends AppCompatActivity
     public static Map getPriceDateData() {
         //sort map by date
         Map<Date, Double> map = new TreeMap<Date, Double>(data_price_date);
+
+        for(Map.Entry<Date, Double> entry : data_price_date.entrySet())
+        {
+            Log.v("KEY, VALUE: ", entry.getKey().toString() + ", " + entry.getValue().toString());
+        }
         return map;
     }
 
