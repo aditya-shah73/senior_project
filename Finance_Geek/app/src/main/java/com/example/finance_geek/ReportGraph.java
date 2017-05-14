@@ -51,7 +51,6 @@ public class ReportGraph extends Fragment {
         int j = 0;
         for(int i = 0; i < totalPriceData.size(); i++)
         {
-            Date dateobj = new Date();
             Calendar cal = new GregorianCalendar();
             cal.add(Calendar.DAY_OF_MONTH, -7);
             Date sevenDaysAgo = cal.getTime();
@@ -61,6 +60,11 @@ public class ReportGraph extends Fragment {
             {
                 j = i;
                 Log.v("Index ", j +"");
+            }
+            else if(totalDateData.get(i).after(sevenDaysAgo))
+            {
+                j = i;
+                break;
             }
         }
 
