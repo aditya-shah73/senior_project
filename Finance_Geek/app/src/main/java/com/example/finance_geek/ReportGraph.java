@@ -12,18 +12,15 @@ import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.utils.ColorTemplate;
-
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.text.*;
 import java.util.*;
 
 public class ReportGraph extends Fragment {
-    PieChart chartView;
-    ArrayList<Float> totalPriceData = new ArrayList<>();
-    ArrayList<Date> totalDateData = new ArrayList<>();
-    ArrayList<String> weekly = new ArrayList<>();
-    ArrayList<Float> weekly_price = new ArrayList<>();
+    private PieChart chartView;
+    private ArrayList<Float> totalPriceData = new ArrayList<>();
+    private ArrayList<Date> totalDateData = new ArrayList<>();
+    private ArrayList<String> weekly = new ArrayList<>();
+    private ArrayList<Float> weekly_price = new ArrayList<>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -58,7 +55,6 @@ public class ReportGraph extends Fragment {
             Calendar cal = new GregorianCalendar();
             cal.add(Calendar.DAY_OF_MONTH, -7);
             Date sevenDaysAgo = cal.getTime();
-            String today = df.format(dateobj);
             String week = df.format(sevenDaysAgo);
             Log.v("1 week ago: ", week);
             if(df.format(totalDateData.get(i)).equals(week))

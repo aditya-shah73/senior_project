@@ -37,11 +37,10 @@ public class DownloadUrl {
             }
 
             data = sb.toString();
-            Log.d("downloadUrl", data.toString());
             br.close();
 
         } catch (Exception e) {
-            Log.d("Exception", e.toString());
+            e.printStackTrace();
         } finally {
             iStream.close();
             urlConnection.disconnect();

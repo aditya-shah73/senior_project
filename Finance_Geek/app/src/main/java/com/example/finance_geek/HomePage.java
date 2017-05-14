@@ -550,13 +550,7 @@ public class HomePage extends AppCompatActivity
     }
 
     public static Map getPriceDateData() {
-        //sort map by date
-        Map<Date, Double> map = new TreeMap<Date, Double>(data_price_date);
-
-        for(Map.Entry<Date, Double> entry : data_price_date.entrySet())
-        {
-            Log.v("KEY, VALUE: ", entry.getKey().toString() + ", " + entry.getValue().toString());
-        }
+        Map<Date, Double> map = new TreeMap<>(data_price_date);
         return map;
     }
 
