@@ -22,7 +22,8 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_home__page" />
+    <include layout="@layout/content_home__page"
+        android:id="@+id/include2" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
@@ -42,4 +43,12 @@
         android:layout_margin="@dimen/fab_margin"
         app:srcCompat="@android:drawable/ic_menu_my_calendar"
         app:backgroundTint="@color/green" />
+
+    <TextView
+        android:id="@+id/noPurchases"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textSize="15dp"
+        android:text="You have not made any purchases!" />
 </android.support.design.widget.CoordinatorLayout>
