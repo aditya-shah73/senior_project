@@ -425,9 +425,9 @@ public class HomePage extends AppCompatActivity
         });
 
         // Delete items when clicked
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
 
-            public void onItemClick(AdapterView<?> parent, View view,
+            public boolean onItemLongClick(AdapterView<?> parent, View view,
                                     int position, long id) {
 
                 Item item = (Item) listView.getItemAtPosition(position);
@@ -439,7 +439,7 @@ public class HomePage extends AppCompatActivity
                 itemListChild.child(item.getKey()).removeValue();
                 adapter.remove(adapter.getItem(position));
                 adapter.notifyDataSetChanged();
-
+                return false;
             }
 
         });
