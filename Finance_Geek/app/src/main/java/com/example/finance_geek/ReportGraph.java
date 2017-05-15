@@ -7,22 +7,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.utils.ColorTemplate;
-
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
-import java.util.Map;
+import java.text.*;
+import java.util.*;
 
 public class ReportGraph extends Fragment {
     private PieChart chartView;
@@ -51,6 +42,7 @@ public class ReportGraph extends Fragment {
         for(Map.Entry<Date, Double> entry : data_price_date.entrySet())
         {
             double value = entry.getValue();
+
             totalDateData.add(entry.getKey());
             totalPriceData.add((float) value);
         }
@@ -59,15 +51,20 @@ public class ReportGraph extends Fragment {
         int j = 0;
         for(int i = 0; i < totalPriceData.size(); i++)
         {
-            Date dateobj = new Date();
             Calendar cal = new GregorianCalendar();
             cal.add(Calendar.DAY_OF_MONTH, -7);
             Date sevenDaysAgo = cal.getTime();
-            String today = df.format(dateobj);
             String week = df.format(sevenDaysAgo);
+            Log.v("1 week ago: ", week);
             if(df.format(totalDateData.get(i)).equals(week))
             {
                 j = i;
+                Log.v("Index ", j +"");
+            }
+            else if(totalDateData.get(i).after(sevenDaysAgo))
+            {
+                j = i;
+                break;
             }
         }
 
@@ -79,6 +76,8 @@ public class ReportGraph extends Fragment {
 
         for(int a = 0;a<weekly_price.size();a++)
         {
+            Log.v("Filtered Dates: ", weekly.get(a));
+            Log.v("Filtered Prices: ", String.valueOf(weekly_price.get(a)));
             pieEntry.add(new PieEntry(weekly_price.get(a), weekly.get(a)));
         }
 

@@ -1,5 +1,6 @@
 package com.example.finance_geek;
 
+import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -10,6 +11,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
@@ -65,6 +67,9 @@ public class ScanPage extends AppCompatActivity
     private String restaurant = "";
     String datapath = "";
 
+    Uri mImageUri;
+    File photo = null;
+
     //date
     final DateFormat df = new SimpleDateFormat("MMM dd, yyyy");
     final Date dateobj = new Date();
@@ -119,6 +124,9 @@ public class ScanPage extends AppCompatActivity
 
         myStorage = FirebaseStorage.getInstance().getReference();
 
+        StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+        StrictMode.setVmPolicy(builder.build());
+
         selectPictureButton = (FloatingActionButton) findViewById(R.id.select_image);
 
         imageView = (ImageView)findViewById(R.id.imageView);
@@ -163,10 +171,23 @@ public class ScanPage extends AppCompatActivity
 
     public void onLaunchCamera(View view) {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-
-        if (intent.resolveActivity(getPackageManager()) != null) {
-            startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+        intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        try
+        {
+            // place where to store camera taken picture
+            photo = this.createTemporaryFile("picture", ".jpg");
+            photo.delete();
         }
+        catch(Exception e)
+        {
+            Toast.makeText(this, "Please check SD card! Image shot is impossible!", Toast.LENGTH_SHORT).show();
+        }
+        mImageUri = Uri.fromFile(photo);
+
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, mImageUri);
+
+        startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+
     }
 
     @Override
@@ -176,12 +197,19 @@ public class ScanPage extends AppCompatActivity
         {
             if (resultCode == RESULT_OK)
             {
-                Bundle extras = data.getExtras();
-                Bitmap imageBitmap = (Bitmap) extras.get("data");
-                Uri takenPhotoUri = getPhotoFileUri(photoFileName);
-                image = imageBitmap;
-                imageView = (ImageView) findViewById(R.id.imageView);
-                imageView.setImageBitmap(image);
+                this.getContentResolver().notifyChange(mImageUri, null);
+                ContentResolver cr = this.getContentResolver();
+
+                try
+                {
+                    image = android.provider.MediaStore.Images.Media.getBitmap(cr, mImageUri);
+                    imageView = (ImageView) findViewById(R.id.imageView);
+                    imageView.setImageBitmap(image);
+                }
+                catch (Exception e)
+                {
+                    Toast.makeText(this, "Failed to load", Toast.LENGTH_SHORT).show();
+                }
 
                 try {
                     //Pop up text input for restaurant name
@@ -197,7 +225,6 @@ public class ScanPage extends AppCompatActivity
                         public void onClick(DialogInterface dialog, int which) {
                             restaurant = input.getText().toString();
                             processImage();
-                            saveImageToGallery();
                         }
                     });
 
@@ -271,27 +298,7 @@ public class ScanPage extends AppCompatActivity
             imageView.setImageBitmap(imageBitmap);
         }
     }
-
-    public Uri getPhotoFileUri(String fileName) {
-        File mediaStorageDir = new File(
-                getExternalFilesDir(Environment.DIRECTORY_PICTURES), APP_TAG);
-
-        if (!mediaStorageDir.exists() && !mediaStorageDir.mkdirs()) {
-            Log.d(APP_TAG, "failed to create directory");
-        }
-
-        File file = new File(mediaStorageDir.getPath() + File.separator + fileName);
-
-        return FileProvider.getUriForFile(ScanPage.this, "com.example.finance_geek.fileprovider", file);
-    }
-
-    private void saveImageToGallery(){
-        imageView.setDrawingCacheEnabled(true);
-        Bitmap b = imageView.getDrawingCache();
-        MediaStore.Images.Media.insertImage(this.getContentResolver(), b,"test", "test");
-    }
-
-
+    
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -461,6 +468,10 @@ public class ScanPage extends AppCompatActivity
         if (successMessage) {
             Toast.makeText(ScanPage.this, "Successfully added items from receipt!", Toast.LENGTH_LONG).show();
         }
+        else
+        {
+            Toast.makeText(this, "Problem reading receipt! Try another.", Toast.LENGTH_SHORT).show();
+        }
     }
 
     public void writeToDB(String r, String i, double p)
@@ -471,5 +482,16 @@ public class ScanPage extends AppCompatActivity
         final DatabaseReference itemListChild = myRef.child("Item List");
         DatabaseReference itemChild = itemListChild.push();
         itemChild.setValue(new Item(r, i, p, df.format(dateobj)));
+    }
+
+    private File createTemporaryFile(String part, String ext) throws Exception
+    {
+        File tempDir= Environment.getExternalStorageDirectory();
+        tempDir=new File(tempDir.getAbsolutePath()+"/.temp/");
+        if(!tempDir.exists())
+        {
+            tempDir.mkdirs();
+        }
+        return File.createTempFile(part, ext, tempDir);
     }
 }

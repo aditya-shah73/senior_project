@@ -8,23 +8,14 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
-
-import java.util.HashMap;
-import java.util.Map;
+import com.google.firebase.database.*;
+import java.util.*;
 
 public class AlternativesPage extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -93,7 +84,6 @@ public class AlternativesPage extends AppCompatActivity
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for(DataSnapshot singleSnapshot : dataSnapshot.getChildren()){
                     final String restaurantName = singleSnapshot.getKey();
-                    Log.v("RESTAURANT_NAME: ", restaurantName);
 
                     //query to get restaurant address
                     final Query restaurantAddress = restaurant.child(restaurantName).orderByKey().equalTo("Address");
@@ -102,7 +92,6 @@ public class AlternativesPage extends AppCompatActivity
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             for(DataSnapshot singleSnapshot : dataSnapshot.getChildren()){
                                 address = singleSnapshot.getValue().toString();
-                                Log.v("RESTAURANT_ADDRESS: ", address);
                             }
                         }
                         @Override
@@ -118,7 +107,6 @@ public class AlternativesPage extends AppCompatActivity
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             for(DataSnapshot singleSnapshot : dataSnapshot.getChildren()){
                                 number = singleSnapshot.getValue().toString();
-                                Log.v("RESTAURANT_NUMBER: ", number);
                             }
                         }
                         @Override
@@ -136,13 +124,9 @@ public class AlternativesPage extends AppCompatActivity
                                 String key = singleSnapshot.getKey();
                                 double value = Double.parseDouble(singleSnapshot.getValue().toString());
                                 String price = String.valueOf(String.format("%.2f", value));
-                                Log.v("RESTAURANT ITEMS: ", key + ", " + value);
-
                                 //add to listview
                                 for (Map.Entry entry : data.entrySet()) {
                                     if(entry.getKey().equals(key)) {
-                                        Log.v("FIRST", "IF");
-
                                         if((double)entry.getValue() > value) {
                                             adapter.add(key + "\n"
                                                     + "Restaurant: " + restaurantName + "\n"
@@ -151,7 +135,6 @@ public class AlternativesPage extends AppCompatActivity
                                                     + "Number: " + number
 
                                             );
-                                            Log.v("SECOND", "IF");
                                         }
                                     }
                                 }
