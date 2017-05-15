@@ -441,7 +441,6 @@ public class HomePage extends AppCompatActivity
                 adapter.notifyDataSetChanged();
                 return false;
             }
-
         });
 
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
