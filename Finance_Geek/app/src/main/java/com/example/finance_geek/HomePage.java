@@ -288,6 +288,7 @@ public class HomePage extends AppCompatActivity
                 if(adapter.isEmpty()) {
                     totalPrice.setText("Total: $0.00");
                     sum = 0.0;
+                    noPurchases.setVisibility(View.VISIBLE);
                 }
 
                 //get total price
@@ -337,6 +338,7 @@ public class HomePage extends AppCompatActivity
                 //updating total price
                 if(adapter.isEmpty()) {
                     totalPrice.setText("Total: $0.00");
+                    noPurchases.setVisibility(View.VISIBLE);
                 }
                 else {
                     //get total price
@@ -350,7 +352,13 @@ public class HomePage extends AppCompatActivity
                     }
                 }
                 value.setKey(dataSnapshot.getKey());
-                noPurchases.setVisibility(View.GONE);
+
+                if(sum == 0.0) {
+                    noPurchases.setVisibility(View.VISIBLE);
+                }
+                else {
+                    noPurchases.setVisibility(View.GONE);
+                }
                 }
 
 
@@ -374,6 +382,9 @@ public class HomePage extends AppCompatActivity
                 if(sum == 0.0) {
                     totalPriceChild.child(date.getText().toString()).removeValue();
                     noPurchases.setVisibility(View.VISIBLE);
+                }
+                else {
+                    noPurchases.setVisibility(View.GONE);
                 }
             }
 
