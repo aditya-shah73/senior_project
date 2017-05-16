@@ -158,9 +158,6 @@ public class HomePage extends AppCompatActivity
         final TextView totalPrice = (TextView) findViewById(R.id.totalPrice);
         totalPrice.setText("Total: $0.00");
 
-        //no purchase textview
-        final TextView noPurchases = (TextView) findViewById(R.id.noPurchases);
-
         // Get ListView object from xml
         final ListView listView = (ListView) findViewById(R.id.listView);
 
@@ -301,13 +298,6 @@ public class HomePage extends AppCompatActivity
                             sum = price;
                             String stringPrice = String.valueOf(String.format("%.2f", sum)); //2 decimal places
                             totalPrice.setText("Total: $" + stringPrice);
-
-                            if(sum == 0.0) {
-                                noPurchases.setVisibility(View.VISIBLE);
-                            }
-                            else {
-                                noPurchases.setVisibility(View.GONE);
-                            }
                         }
                     }
                     @Override
@@ -350,7 +340,6 @@ public class HomePage extends AppCompatActivity
                     }
                 }
                 value.setKey(dataSnapshot.getKey());
-                noPurchases.setVisibility(View.GONE);
                 }
 
 
@@ -373,7 +362,6 @@ public class HomePage extends AppCompatActivity
                 //remove total price from db
                 if(sum == 0.0) {
                     totalPriceChild.child(date.getText().toString()).removeValue();
-                    noPurchases.setVisibility(View.VISIBLE);
                 }
             }
 
